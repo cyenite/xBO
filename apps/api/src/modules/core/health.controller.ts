@@ -1,7 +1,9 @@
 import { Controller, Get } from '@nestjs/common';
 import type { HealthResponse } from '@xbo/contracts';
 import { appConfig } from '../../config';
+import { Public } from '../auth/auth.decorators';
 
+@Public()
 @Controller('health')
 export class HealthController {
   @Get()

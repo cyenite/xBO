@@ -2,7 +2,7 @@
 
 xBO is a back-office / ERP system for FMCG manufacturers and distributors. It covers the operational feature set large enterprise ERPs offer FMCG companies, with a desktop-style interface inspired by macOS and Windows 11, and an open integration API that field sales apps, e-commerce stores and partner systems connect to. One codebase ships as a **web app** and as a **desktop app** for Windows, macOS and Linux.
 
-Date: 2026-10-27. Status: Phase 0 started: monorepo, API skeleton, shared contracts, desktop shell UI and Tauri wrapper are in place.
+Date: 2026-10-28. Status: Phase 0 in progress: monorepo, API skeleton, shared contracts, desktop shell UI, Tauri wrapper, database and migrations, session and machine-client auth, organisations and tenancy scope, and CI are in place.
 
 Product and visual direction live in `PRODUCT.md` and `DESIGN.md` at the repository root; every UI change follows them.
 
@@ -104,10 +104,10 @@ Each step lists deliverables. A step is done when its tests pass in CI and its l
 - **0.3** Shared contracts package (zod) with the first inbound order contract and tests. *(done)*
 - **0.4** Web: Vue 3 + TS + Vite, Tailwind v4 design tokens, ESLint, Vitest. *(done)*; Playwright end-to-end tests. *(to do)*
 - **0.5** Desktop: Tauri 2 wrapper, icons, CSP. *(config done; first build needs the Linux system packages listed in the README)*
-- **0.6** Database: Drizzle ORM, migrations, Docker Compose PostgreSQL and Redis (compose file present), test database per run.
-- **0.7** CI (GitHub Actions): typecheck, lint, tests and builds for every workspace package; desktop installers on tagged releases (Windows, macOS, Linux runners).
-- **0.8** Auth: login, sessions, password reset, 2FA; machine clients with OAuth 2 client credentials, username / password token, bearer, basic and API key header schemes.
-- **0.9** Organisations and tenancy scope; users, roles, permissions (permission matrix per module and action).
+- **0.6** Database: Drizzle ORM, migrations, Docker Compose PostgreSQL and Redis, test database per run. *(done)*
+- **0.7** CI (GitHub Actions): typecheck, lint, tests and builds for every workspace package; desktop installers on tagged releases (Windows, macOS, Linux runners). *(done; the release workflow runs on the first `v*` tag)*
+- **0.8** Auth: login, sessions, password reset, 2FA; machine clients with OAuth 2 client credentials, username / password token, bearer, basic and API key header schemes. *(login, sessions and machine clients done; password reset, 2FA and login rate limiting to do)*
+- **0.9** Organisations and tenancy scope; users, roles, permissions (permission matrix per module and action). *(organisations, memberships and tenancy scope done; user management, roles and permissions to do)*
 - **0.10** Audit log (who changed what, before / after), attachments, comments.
 - **0.11** Number ranges per document type, organisation and year.
 - **0.12** Document framework: base header / line tables, status machine, document flow links, immutability after posting, reversal helper.
@@ -143,7 +143,7 @@ Each step lists deliverables. A step is done when its tests pass in CI and its l
 - **3.2** Contract fixtures: JSON fixtures and contract tests for every integration payload, accepting the field variations real clients send (numbers as strings, extra attributes).
 - **3.3** Inbound reads: price lists, special prices, blanket agreements, promotions, stock balances, van stock, credit limits / open invoices, user credit limits, customer locations, serials, targets, expense categories, loyalty balances.
 - **3.4** Inbound documents: orders, quotations, sales, credit notes, credit note requests, delivery and goods returns, payments, customers, products, users, stock requests, stock takes, reconciliations, trucks for delivery planning, expenses, incentives, leave, feedback, survey answers. Response always `{transaction_id, transaction_reference}`.
-- **3.5** Machine-client auth on every integration endpoint (built in 0.8).
+- **3.5** Machine-client auth on every integration endpoint. *(done in 0.8)*
 - **3.6** Outbound webhooks: customers, products, prices, stock balances, promotions, sales documents, order / collection / requisition / leave status, stock transfers, delivery trips, GL and COGS accounts, categories; signed payloads and per-subscriber retry.
 - **3.7** Polling feeds: orders, invoices and transfer requests waiting for an external system, with acknowledgement and result posting.
 - **3.8** Integration monitor app: message list by category, payload viewer, retry / replay, alerts by email.
@@ -233,7 +233,7 @@ Phases 0 -> 1 -> 2 -> 3 (field sales apps can send master data and orders to xBO
 - Every screen follows `DESIGN.md`: tokens only (no raw colours), status always as icon plus word, tabular figures for numbers, all interactive states, keyboard operable, WCAG 2.2 AA.
 - API backward compatibility: add fields, never remove or rename.
 - Integration jobs must be idempotent and safe to retry.
-- Tests against PostgreSQL in Docker; never drop the database in tests (use transactions).
+- Tests run against PostgreSQL in Docker: each run creates and drops its own throwaway database, so tests never touch development data.
 - Living docs per feature in `.docs/living/` (personal, gitignored).
 
 ## 7. Risks and open questions

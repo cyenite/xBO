@@ -63,7 +63,7 @@ function countFor(id: IntegrationDirectionId): number {
       <div class="min-h-0 flex-1">
         <DataGrid v-model:selected="selectedKey" :rows="rows" :columns="columns" row-key="key" :label="`${direction.label} integration points`">
           <template #cell-target="{ row }">
-            <span class="selectable font-mono text-caption text-ink-muted">{{ row.target }}</span>
+            <span class="selectable font-mono text-caption text-ink-muted" :title="row.target">{{ row.target }}</span>
           </template>
           <template #cell-status>
             <StatusBadge tone="neutral" label="Planned" />

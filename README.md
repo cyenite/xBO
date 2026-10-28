@@ -92,7 +92,7 @@ pnpm --filter @xbo/api db:generate --name describe_the_change
 | Variable | Default | Purpose |
 | --- | --- | --- |
 | `XBO_DATABASE_URL` | `postgres://xbo:xbo@localhost:5433/xbo` | API database |
-| `XBO_TOKEN_SECRET` | development value | Signs integration access tokens; at least 32 characters, required in production |
+| `XBO_TOKEN_SECRET` | random per process outside production | Signs integration access tokens; at least 32 characters, required in production. Without it, access tokens stop working when the API restarts |
 | `XBO_ACCESS_TOKEN_TTL_SECONDS` | `3600` | Lifetime of integration access tokens |
 | `XBO_SESSION_TTL_HOURS` | `336` | Lifetime of a sign-in session |
 | `XBO_SESSION_COOKIE_SECURE` | `true` in production | Marks the session cookie `Secure` |

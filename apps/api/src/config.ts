@@ -1,3 +1,6 @@
+import { randomBytes } from 'node:crypto';
+import { Logger } from '@nestjs/common';
+
 const isProduction = process.env.NODE_ENV === 'production';
 
 export const appConfig = {
@@ -16,13 +19,22 @@ export const authConfig = {
   isSessionCookieSecure: (process.env.XBO_SESSION_COOKIE_SECURE ?? String(isProduction)) === 'true',
 } as const;
 
-const developmentTokenSecret = 'xbo-development-token-secret-not-for-production';
+let generatedTokenSecret: string | undefined;
 
-// Access tokens are HMAC-signed with this secret; a production server must never fall back to the public development value.
+// Access tokens are HMAC-signed with this secret. Without one outside production a random per-process secret is used, never a
+// fixed value, so a server deployed without NODE_ENV=production cannot be made to accept forged tokens.
 export function resolveTokenSecret(): string {
   const secret = authConfig.tokenSecret;
 
-  if (secret === '' && !isProduction) return developmentTokenSecret;
+  if (secret === '' && !isProduction) {
+    if (!generatedTokenSecret) {
+      generatedTokenSecret = randomBytes(32).toString('base64url');
+      new Logger('Config').warn('XBO_TOKEN_SECRET is not set: using a random secret, so integration access tokens stop working when the API restarts.');
+    }
+
+    return generatedTokenSecret;
+  }
+
   if (secret.length < 32) throw new Error('XBO_TOKEN_SECRET must be at least 32 characters (it is required in production).');
 
   return secret;

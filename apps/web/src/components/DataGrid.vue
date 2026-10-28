@@ -204,7 +204,9 @@ function onKeydown(event: KeyboardEvent): void {
   transform: translateY(-50%);
 }
 
+/* Every row is its own grid, so a cell's content must not size its track or long values knock that row out of line. */
 .grid-cell {
+  contain: inline-size;
   position: relative;
   overflow: hidden;
   padding: 0 10px;

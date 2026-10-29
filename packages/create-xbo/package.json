@@ -1,0 +1,36 @@
+{
+  "name": "create-xbo",
+  "version": "0.1.0",
+  "description": "Create a new xBO desktop-style app: pnpm create xbo my-app",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "create-xbo": "./bin/create-xbo.mjs"
+  },
+  "files": [
+    "bin",
+    "template"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cyenite/xBO.git",
+    "directory": "packages/create-xbo"
+  },
+  "homepage": "https://github.com/cyenite/xBO#readme",
+  "keywords": [
+    "xbo",
+    "vue",
+    "desktop",
+    "scaffold"
+  ],
+  "scripts": {
+    "test": "vitest run --dir test"
+  },
+  "devDependencies": {
+    "vitest": "^5.0.5"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}

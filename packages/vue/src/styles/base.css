@@ -1,0 +1,113 @@
+/* Desktop-scoped variables and reset. Unlayered on purpose: see the note in xbo.css. */
+.xbo-desktop {
+  --xbo-shade: 10 25 30;
+  --xbo-material-alpha: 0.78;
+  --xbo-text-scale: 1;
+  --xbo-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --xbo-shadow-window: 0 0 0 1px rgb(var(--xbo-shade) / 0.1), 0 24px 56px -16px rgb(var(--xbo-shade) / 0.32), 0 8px 18px -8px rgb(var(--xbo-shade) / 0.18);
+  --xbo-shadow-window-idle: 0 0 0 1px rgb(var(--xbo-shade) / 0.08), 0 10px 28px -14px rgb(var(--xbo-shade) / 0.2);
+  --xbo-shadow-popover: 0 0 0 1px rgb(var(--xbo-shade) / 0.1), 0 12px 32px -8px rgb(var(--xbo-shade) / 0.24);
+  --xbo-shadow-taskbar: 0 0 0 1px rgb(var(--xbo-shade) / 0.08), 0 8px 24px -10px rgb(var(--xbo-shade) / 0.22);
+
+  --xbo-z-window-base: 100;
+  --xbo-z-snap-preview: 1800;
+  --xbo-z-taskbar: 2000;
+  --xbo-z-menubar: 2100;
+  --xbo-z-launcher: 3000;
+  --xbo-z-palette: 3100;
+  --xbo-z-dialog: 3150;
+  --xbo-z-dropdown: 3200;
+  --xbo-z-toast: 3300;
+  --xbo-z-tooltip: 3400;
+
+  color-scheme: light;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+  background: var(--xbo-wallpaper, var(--xbo-desktop));
+  background-size: cover;
+  background-position: center;
+  color: var(--xbo-ink);
+  font-family: var(--xbo-font-sans);
+  font-size: calc(13px * var(--xbo-text-scale));
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  user-select: none;
+}
+
+.xbo-desktop[data-xbo-fullscreen] {
+  position: fixed;
+  inset: 0;
+}
+
+.xbo-desktop[data-xbo-mode='dark'] {
+  --xbo-shade: 0 0 0;
+  --xbo-material-alpha: 0.72;
+
+  color-scheme: dark;
+}
+
+.xbo-desktop[data-xbo-transparency='reduced'],
+.xbo-desktop[data-xbo-contrast='more'] {
+  --xbo-material-alpha: 1;
+}
+
+.xbo-desktop[data-xbo-text-scale='90'] { --xbo-text-scale: 0.9; }
+.xbo-desktop[data-xbo-text-scale='110'] { --xbo-text-scale: 1.1; }
+.xbo-desktop[data-xbo-text-scale='120'] { --xbo-text-scale: 1.2; }
+.xbo-desktop[data-xbo-text-scale='130'] { --xbo-text-scale: 1.3; }
+
+/* The minimal reset the components rely on, scoped so the host page keeps its own styles. */
+.xbo-desktop *,
+.xbo-desktop *::before,
+.xbo-desktop *::after {
+  box-sizing: border-box;
+  border-width: 0;
+  border-style: solid;
+  border-color: var(--xbo-hairline);
+}
+
+.xbo-desktop :where(h1, h2, h3, h4, h5, h6, p, ul, ol, dl, dd, figure, blockquote) {
+  margin: 0;
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+.xbo-desktop :where(ul, ol) {
+  padding: 0;
+  list-style: none;
+}
+
+.xbo-desktop :where(button, input, select, textarea) {
+  margin: 0;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+  background: transparent;
+}
+
+.xbo-desktop :where(button, [role='button']) {
+  cursor: default;
+}
+
+.xbo-desktop :where(svg) {
+  display: block;
+  flex-shrink: 0;
+}
+
+.xbo-desktop :where(input, textarea, [contenteditable]),
+.xbo-desktop .xbo-selectable {
+  user-select: text;
+}
+
+.xbo-desktop :focus-visible {
+  outline: 2px solid var(--xbo-focus);
+  outline-offset: 1px;
+}
+
+.xbo-desktop ::selection {
+  background: var(--xbo-primary-soft);
+}

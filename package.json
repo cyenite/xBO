@@ -16,7 +16,8 @@
     "test": "pnpm -r test",
     "size": "node scripts/check-size.mjs",
     "changeset": "changeset",
-    "release": "pnpm build:libs && changeset publish"
+    "release": "pnpm build:libs && changeset publish",
+    "smoke": "node scripts/smoke-scaffold.mjs"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

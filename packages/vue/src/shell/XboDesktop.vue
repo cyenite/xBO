@@ -39,8 +39,23 @@ watch(
   },
 );
 
-useResizeObserver(root, ([entry]) => {
+const { isSupported: isResizeObserverSupported } = useResizeObserver(root, ([entry]) => {
   if (entry) size.value = { width: entry.contentRect.width, height: entry.contentRect.height };
+});
+
+let hasStarted = false;
+
+// Windows are laid out against the workspace, so startup waits for the first real measurement; opening them against
+// the placeholder size would cascade and clamp them for a desktop that does not exist.
+function startOnce(): void {
+  if (hasStarted) return;
+
+  hasStarted = true;
+  void xbo.start();
+}
+
+watch(size, (next) => {
+  if (next.width > 0 && next.height > 0) startOnce();
 });
 
 function openSwitcher(): void {
@@ -109,7 +124,7 @@ onMounted(() => {
   xbo.ui.rootElement = root.value;
   xbo.ui.portalTarget = portalHost.value;
 
-  void xbo.start();
+  if (!isResizeObserverSupported.value) startOnce();
 });
 </script>
 

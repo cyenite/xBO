@@ -23,10 +23,10 @@ xBO is an open-source framework for desktop-style applications on the web and Ta
 | M2 Shell | `createXbo`, `<XboDesktop>`, menu bar, taskbar, launcher, palette, notifications, dialogs and sheets, window switcher, session restore, deep links, i18n, composables | Done |
 | M3 Theming and settings | Presets, accent, contrast, transparency, motion, density, text size, radius, wallpaper; Settings app with keyboard rebinding and developer sections | Done |
 | M4 Component kit | Actions, inputs, data (including the full data grid), layout, feedback | Done |
-| M5 Packaging | Library build, type declarations, exports, size budget in CI | In progress |
-| M6 Tauri adapter | `@xbo-ui/tauri`: native window integration, store adapter, single-window mode | Planned |
-| M7 Docs and tooling | Documentation site with live demos, `create-xbo` scaffolder, Playwright end-to-end and axe accessibility tests | Planned |
-| M8 Release | Changesets, npm publishing with provenance under `@xbo-ui` | Planned |
+| M5 Packaging | Library build, type declarations, exports, size budget in CI, scaffold smoke test | Done |
+| M6 Tauri adapter | `@xbo-ui/tauri`: native window controls, store adapter, opening links; desktop playground build | Done |
+| M7 Docs and tooling | Documentation site with live demos, `create-xbo` scaffolder, Playwright end-to-end and axe accessibility tests | Done |
+| M8 Release | Changesets, npm publishing with provenance under `@xbo-ui` | Ready; waiting for the npm org and token |
 
 ## Conventions
 

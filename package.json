@@ -2,17 +2,15 @@
   "name": "xbo",
   "private": true,
   "version": "0.1.0",
-  "description": "xBO (Back Office): open-source property management back office for web and desktop.",
+  "description": "xBO: an open-source framework for building desktop-style applications for the web and Tauri.",
   "packageManager": "pnpm@10.30.2",
   "engines": {
     "node": ">=22"
   },
   "scripts": {
-    "dev:api": "pnpm --filter @xbo/api dev",
-    "dev:web": "pnpm --filter @xbo/web dev",
-    "dev:desktop": "pnpm --filter @xbo/desktop dev",
-    "build": "pnpm -r --filter !@xbo/desktop build",
-    "build:desktop": "pnpm --filter @xbo/desktop build",
+    "dev": "pnpm --filter @xbo-ui/playground dev",
+    "build:libs": "pnpm --filter \"./packages/**\" build",
+    "build": "pnpm -r build",
     "typecheck": "pnpm -r typecheck",
     "lint": "pnpm -r lint",
     "test": "pnpm -r test"
@@ -22,5 +20,6 @@
       "@swc/core",
       "esbuild"
     ]
-  }
+  },
+  "license": "MIT"
 }

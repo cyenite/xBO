@@ -42,3 +42,6 @@ jobs:
       - run: pnpm test
 
       - run: pnpm build
+
+      - name: Check bundle sizes
+        run: pnpm size

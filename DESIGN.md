@@ -1,6 +1,6 @@
 ---
 name: xBO
-description: Back office for property management, built like a native desktop.
+description: The default design system of xBO, a framework for desktop-style applications on the web and Tauri.
 colors:
   primary: "#006f7c"
   primary-hover: "#00606d"
@@ -129,11 +129,13 @@ components:
 
 ## 1. Overview
 
+This is the default look every xBO app starts with, the "Harbour" theme. Developers can change the accent, radius scale, fonts and any token through `createXbo({ theme })`, and users can change appearance, accent, contrast, density, text size and wallpaper in Settings; the rules below still apply to every combination (contrast is checked automatically for derived accents).
+
 **Creative North Star: "The Operating System for the Back Office"**
 
-xBO should look like the operating system itself grew a back office. The user is at a desk under office light, with several documents open, moving fast with the keyboard. Every surface follows the grammar people already trust from macOS and Windows 11: a menu bar that belongs to the focused window, a taskbar of running work, windows that open, stack, snap and remember where they were. Familiarity is the feature. Craft shows in alignment, rhythm, exact figures and calm restraint, not in ornament.
+An xBO app should look like the operating system itself grew it. The user is at a desk under office light, with several documents open, moving fast with the keyboard. Every surface follows the grammar people already trust from macOS and Windows 11: a menu bar that belongs to the focused window, a taskbar of running work, windows that open, stack, snap and remember where they were. Familiarity is the feature. Craft shows in alignment, rhythm, exact figures and calm restraint, not in ornament.
 
-Density is a virtue here. A clerk sees forty units of a rent roll without scrolling, every number in tabular figures and right-aligned, every label exact. Hierarchy comes from type weight, spacing and the two neutral layers (window and chrome), not from boxes, cards and colour. Colour is a signal: the deep teal marks the primary action, the current selection and focus; red, amber and green mark state, always with an icon and words.
+Density is a virtue here. A clerk sees forty rows of a grid without scrolling, every number in tabular figures and right-aligned, every label exact. Hierarchy comes from type weight, spacing and the two neutral layers (window and chrome), not from boxes, cards and colour. Colour is a signal: the deep teal marks the primary action, the current selection and focus; red, amber and green mark state, always with an icon and words.
 
 This system rejects, by name, the PRODUCT.md anti-references: **SAP GUI / classic SAP** (grey forms, cryptic codes, dated chrome), **generic SaaS admin** (sidebar + stat cards + charts), **Odoo and typical web ERPs** (busy pages, form-after-form navigation that loses context) and **over-styled glass UI** (heavy blur and gradients behind data).
 

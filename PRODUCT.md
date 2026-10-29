@@ -6,29 +6,26 @@ product
 
 ## Users
 
-People who run the back office of property management companies, letting agents and landlords with large portfolios, inside the software for most of their working day:
+Two audiences, in this order:
 
-- **Property and leasing officers** letting units, drafting and renewing leases, handling notices, move-ins and move-outs. Many open records at once, constant interruptions from tenants.
-- **Accounts clerks** running monthly billing, matching M-Pesa and bank payments to tenants, chasing arrears. High-volume, keyboard-driven, repetitive work where seconds per payment add up to hours at month start.
-- **Managers and owners' representatives** approving work orders, write-offs and owner remittances, watching occupancy and arrears. Short, frequent visits that need answers at a glance.
-- **Finance and accounting** reconciling bank and mobile-money statements, closing periods, producing owner statements and tax returns. Precision and audit trail matter more than speed.
-- **Maintenance coordinators** logging faults, assigning contractors, tracking quotes and costs.
-
-Many of these users already work in spreadsheets, an accounting package with add-ons, or an older property system, and they keep several records open at once.
+- **Developers** building business and productivity software that people live in all day: back offices, admin consoles, internal tools, data-heavy line-of-business apps. They want a desktop-grade shell (windows, menus, taskbar, command palette, keyboard everything, settings, theming) without building one, and they want it to run in the browser and as a native app through Tauri from one codebase.
+- **The people who use those apps**: clerks, analysts, operators, managers. They keep several records open at once, work from the keyboard, and spend hours a day in the software. Seconds per task add up; so does eye strain.
 
 ## Product Purpose
 
-xBO is the system of record for a property management business: properties and units, owners, tenants and leases, rent and service-charge billing, metered utilities, collections and arrears, deposits, maintenance and inspections, owner statements and remittances, and the accounting under all of it. It runs in the browser and as a desktop app, and connects to payment services, tenant portals, banks and messaging providers through an open integration API.
+xBO is an open-source framework for building desktop-style applications for the web and Tauri. Developers register their apps (Vue components) with one `createXbo()` call and get a complete desktop: windows that drag, resize, snap and remember where they were; a menu bar that follows the focused app; a taskbar; a Start launcher; a command palette; notifications; dialogs and window-modal sheets; a Settings app users can change appearance, accent, contrast, density, text size, wallpaper, window controls and keyboard shortcuts in; and a component kit (data grid, forms, lists, trees, tabs, split views, overlays) that follows the same theme.
 
-Success: a property manager sees it once and believes it is the most carefully made business software they have used; clerks match the month's payments faster than they did in spreadsheets; owners and finance trust every number.
+Everything is configurable: brand, apps and groups, menus, status items, shortcuts, theme and tokens, preference defaults (and which ones are locked or hidden), storage, startup windows, routing and language.
+
+Success: a developer has a credible desktop app running in an afternoon, and its users believe it was built by a large, careful team.
 
 ## Brand Personality
 
 **Precise, calm, trustworthy.**
 
-- Voice: plain, exact, unhurried. Labels say what things are; messages say what happened and what to do next. No hype, no jokes in workflows.
-- Feel: native OS-grade, as if Apple or Microsoft had built a property back office. Restrained, quietly confident, nothing decorative.
-- Emotional goal: control. The user always knows where they are, what changed, and that nothing was lost.
+- Voice: plain, exact, unhurried. Labels say what things are; messages say what happened and what to do next.
+- Feel: native OS-grade, as if Apple or Microsoft had built a web framework. Restrained, quietly confident, nothing decorative.
+- Developer experience: one obvious way to do each thing, typed end to end, sensible defaults, every default overridable.
 
 References and what to take from each:
 - **macOS apps (Finder, Mail):** the menu bar, toolbars and sidebars, keyboard-first operation, pixel-level precision.
@@ -46,14 +43,15 @@ References and what to take from each:
 ## Design Principles
 
 1. **The desktop is the workspace.** Several documents live side by side in windows; nothing important hides behind navigation that throws away context.
-2. **Density with clarity.** Show more data per screen than a web app would, but every column, label and number stays legible and aligned. Hierarchy comes from typography and spacing, not boxes and colour.
-3. **Keyboard first, mouse welcome.** Every action has a shortcut and a palette entry; tab order, Enter and Esc behave exactly as users expect from desktop software.
-4. **Calm by default, loud only when it matters.** Colour signals state (blocked, overdue, failed sync), never decoration. When something needs attention, it is unmistakable.
-5. **Nothing surprises finance.** Posted means final, changes are traceable, numbers are exact and consistently formatted.
+2. **Density with clarity.** Show more data per screen than a web app would, but every column, label and number stays legible and aligned.
+3. **Keyboard first, mouse welcome.** Every action has a shortcut and a palette entry; users can rebind shortcuts.
+4. **Calm by default, loud only when it matters.** Colour signals state, never decoration.
+5. **Configurable without forking.** Anything a developer might reasonably want to change is a config option, a slot, a registry or a token.
+6. **The host page is not ours.** No global resets, no leaked class names; the desktop can run fullscreen or embedded.
 
 ## Accessibility & Inclusion
 
-- **WCAG 2.2 AA** across web and desktop: full keyboard operation, visible focus, 4.5:1 text contrast (3:1 for large text and UI components), target sizes, screen-reader names for every control.
-- Respect `prefers-reduced-motion`, `prefers-contrast` and a reduce-transparency setting (menu bar, taskbar and popovers fall back to opaque surfaces).
-- Status is never colour-only: pair colour with icon and text, safe for colour-blind users.
-- Text scales to 200% without loss of content; a compact and a comfortable density mode.
+- **WCAG 2.2 AA** across web and desktop: full keyboard operation, visible focus, 4.5:1 text contrast (checked automatically for derived accents), target sizes, screen-reader names for every control.
+- User settings for appearance, increased contrast, reduced transparency, reduced motion, density and text size (90 to 130%), each following the system by default where the system has a setting.
+- Status is never colour-only: pair colour with icon and text.
+- Every built-in string is translatable.

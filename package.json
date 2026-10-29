@@ -13,7 +13,10 @@
     "build": "pnpm -r build",
     "typecheck": "pnpm -r typecheck",
     "lint": "pnpm -r lint",
-    "test": "pnpm -r test"
+    "test": "pnpm -r test",
+    "size": "node scripts/check-size.mjs",
+    "changeset": "changeset",
+    "release": "pnpm build:libs && changeset publish"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
@@ -21,5 +24,8 @@
       "esbuild"
     ]
   },
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@changesets/cli": "^2.31.1"
+  }
 }

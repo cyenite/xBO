@@ -1,6 +1,6 @@
 {
   "name": "@xbo-ui/tauri",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "description": "Tauri 2 integration for xBO: native window controls for frameless windows, settings stored in the app data directory, and opening links.",
   "license": "MIT",
   "type": "module",

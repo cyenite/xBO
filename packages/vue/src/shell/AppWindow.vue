@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed, provide } from 'vue';
+import { computed, provide, ref } from 'vue';
 import { resizeEdges, type DesktopWindow, type SnapZone } from '@xbo-ui/core';
-import { useXbo, windowIdKey } from '../composables';
+import { useXbo, windowBodyKey, windowIdKey } from '../composables';
 import DialogHost from './DialogHost.vue';
 import WindowControls from './WindowControls.vue';
 import { useWindowGestures } from './useWindowGestures';
@@ -13,7 +13,10 @@ const props = defineProps<{
 const xbo = useXbo();
 const { isInteracting, startMove, startResize } = useWindowGestures(props.window.id);
 
+const body = ref<HTMLElement | null>(null);
+
 provide(windowIdKey, props.window.id);
+provide(windowBodyKey, body);
 
 const app = computed(() => xbo.findApp(props.window.appId));
 const isMac = computed(() => xbo.chromeStyle.value === 'macos');
@@ -97,7 +100,7 @@ function toggleMaximize(): void {
       />
     </header>
 
-    <div class="xb:relative xb:min-h-0 xb:flex-1">
+    <div ref="body" class="xb:relative xb:min-h-0 xb:flex-1">
       <component :is="app.component" v-if="app" :window-id="window.id" :app-id="app.id" :params="window.params" />
       <DialogHost :window-id="window.id" />
     </div>

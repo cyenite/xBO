@@ -4,6 +4,7 @@ import type { MenuDefinition } from './config';
 import { xboKey, type CloseGuard, type Command, type DialogOptions, type NotifyOptions, type XboInstance } from './instance';
 
 export const windowIdKey: InjectionKey<string> = Symbol('xbo-window');
+export const windowBodyKey: InjectionKey<Ref<HTMLElement | null>> = Symbol('xbo-window-body');
 
 function disposeWithScope(dispose: () => void): () => void {
   if (getCurrentScope()) onScopeDispose(dispose);

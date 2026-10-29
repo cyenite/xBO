@@ -13,11 +13,9 @@
     "test": "vitest run --passWithNoTests"
   },
   "dependencies": {
-    "@vueuse/core": "^15.0.0",
-    "pinia": "^4.1.0",
-    "reka-ui": "^2.11.0",
+    "@xbo-ui/vue": "workspace:*",
     "vue": "^3.5.44",
-    "@xbo-ui/core": "workspace:*"
+    "@vueuse/core": "^15.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

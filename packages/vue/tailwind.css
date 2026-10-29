@@ -1,0 +1,58 @@
+/*
+ * Optional: import after `@import "tailwindcss";` in an app that uses Tailwind v4 to get xBO's tokens as utilities,
+ * for example `bg-window`, `text-ink-muted`, `ring-hairline`, `rounded-md`, `text-body`, `shadow-popover`.
+ * The values are the live `--xbo-*` custom properties, so they follow the user's theme, accent and text size.
+ */
+@custom-variant xbo-dark (&:where([data-xbo-mode='dark'], [data-xbo-mode='dark'] *));
+
+@theme inline {
+  --color-desktop: var(--xbo-desktop);
+  --color-window: var(--xbo-window);
+  --color-chrome: var(--xbo-chrome);
+  --color-raised: var(--xbo-raised);
+  --color-hover: var(--xbo-hover);
+  --color-pressed: var(--xbo-pressed);
+  --color-hairline: var(--xbo-hairline);
+  --color-field-border: var(--xbo-field-border);
+  --color-ink: var(--xbo-ink);
+  --color-ink-muted: var(--xbo-ink-muted);
+  --color-ink-subtle: var(--xbo-ink-subtle);
+  --color-primary: var(--xbo-primary);
+  --color-primary-hover: var(--xbo-primary-hover);
+  --color-primary-soft: var(--xbo-primary-soft);
+  --color-on-primary: var(--xbo-on-primary);
+  --color-focus: var(--xbo-focus);
+  --color-danger: var(--xbo-danger);
+  --color-danger-soft: var(--xbo-danger-soft);
+  --color-warning: var(--xbo-warning);
+  --color-warning-fill: var(--xbo-warning-fill);
+  --color-warning-soft: var(--xbo-warning-soft);
+  --color-success: var(--xbo-success);
+  --color-success-soft: var(--xbo-success-soft);
+
+  --font-sans: var(--xbo-font-sans);
+  --font-mono: var(--xbo-font-mono);
+
+  --text-label: calc(11px * var(--xbo-text-scale));
+  --text-label--line-height: 1.3;
+  --text-caption: calc(12px * var(--xbo-text-scale));
+  --text-caption--line-height: 1.4;
+  --text-body: calc(13px * var(--xbo-text-scale));
+  --text-body--line-height: 1.45;
+  --text-title: calc(15px * var(--xbo-text-scale));
+  --text-title--line-height: 1.35;
+  --text-headline: calc(17px * var(--xbo-text-scale));
+  --text-headline--line-height: 1.3;
+  --text-display: calc(20px * var(--xbo-text-scale));
+  --text-display--line-height: 1.25;
+
+  --radius-xs: var(--xbo-radius-xs);
+  --radius-sm: var(--xbo-radius-sm);
+  --radius-md: var(--xbo-radius-md);
+  --radius-lg: var(--xbo-radius-lg);
+  --radius-xl: var(--xbo-radius-xl);
+
+  --shadow-window: var(--xbo-shadow-window);
+  --shadow-popover: var(--xbo-shadow-popover);
+  --shadow-taskbar: var(--xbo-shadow-taskbar);
+}

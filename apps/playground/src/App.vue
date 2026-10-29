@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import DesktopShell from './shell/DesktopShell.vue';
+import { XboDesktop } from '@xbo-ui/vue';
 </script>
 
 <template>
-  <DesktopShell />
+  <XboDesktop />
 </template>

@@ -64,6 +64,9 @@ export const hourCycleOptions = [
   { value: 'h12', label: '12-hour' },
 ] as const;
 
+// 'brand' resolves to the accent the developer configured, or Harbour when there is none.
+export const accentOptions = [{ value: 'brand', label: 'Brand colour' }, ...themePresets.map(({ value, label }) => ({ value, label }))] as const;
+
 export const wallpaperKinds = [
   { value: 'tint', label: 'Accent tint' },
   { value: 'solid', label: 'Solid colour' },
@@ -85,7 +88,7 @@ export type TaskbarAlignment = OptionValue<typeof taskbarAlignmentOptions>;
 export type ClockPreference = OptionValue<typeof clockOptions>;
 export type HourCyclePreference = OptionValue<typeof hourCycleOptions>;
 export type WallpaperKind = OptionValue<typeof wallpaperKinds>;
-export type AccentPreference = OptionValue<typeof themePresets>;
+export type AccentPreference = OptionValue<typeof accentOptions>;
 export type RadiusPreference = OptionValue<typeof radiusScales>;
 export type WindowChromeStyle = Exclude<WindowChromePreference, 'auto'>;
 
@@ -122,7 +125,7 @@ export type PreferenceKey = keyof Preferences;
 
 export const defaultPreferences: Preferences = {
   clock: 'time',
-  accent: 'harbour',
+  accent: 'brand',
   locale: '',
   motion: 'system',
   radius: 'default',
@@ -146,7 +149,7 @@ export const defaultPreferences: Preferences = {
 
 const enumeratedPreferences: Partial<Record<PreferenceKey, readonly { value: string }[]>> = {
   clock: clockOptions,
-  accent: themePresets,
+  accent: accentOptions,
   motion: motionOptions,
   radius: radiusScales,
   density: densityOptions,

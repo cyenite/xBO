@@ -76,7 +76,7 @@ function onKeydown(event: KeyboardEvent): void {
                 v-model="query"
                 type="text"
                 class="min-w-0 flex-1 bg-transparent text-body text-ink outline-none placeholder:text-ink-subtle"
-                placeholder="Search apps, for example “credit” or “empties”"
+                placeholder="Search apps, for example “arrears” or “leases”"
               />
             </label>
           </div>

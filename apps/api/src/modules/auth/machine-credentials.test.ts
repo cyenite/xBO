@@ -12,8 +12,7 @@ describe('readMachineCredentials', () => {
     expect(readMachineCredentials({ authorization: 'bearer abc' })).toEqual({ scheme: 'bearer', token: 'abc' });
   });
 
-  it('reads the TOKEN and X-Api-Key headers', () => {
-    expect(readMachineCredentials({ token: 'abc' })).toEqual({ scheme: 'token-header', token: 'abc' });
+  it('reads the X-Api-Key header', () => {
     expect(readMachineCredentials({ 'x-api-key': 'abc' })).toEqual({ scheme: 'api-key-header', token: 'abc' });
   });
 

@@ -1,23 +1,15 @@
 import { BadRequestException, Body, Controller, Header, Headers, HttpCode, Post, UnauthorizedException } from '@nestjs/common';
-import {
-  clientCredentialsTokenRequestSchema,
-  passwordTokenRequestSchema,
-  type AccessTokenResponse,
-  type PasswordTokenRequest,
-  type PasswordTokenResponse,
-} from '@xbo/contracts';
-import { ZodValidationPipe } from '../../common/zod-validation.pipe';
+import { clientCredentialsTokenRequestSchema, type AccessTokenResponse } from '@xbo/contracts';
 import { Public } from './auth.decorators';
 import { MachineAuthService } from './machine-auth.service';
 import { decodeBasicCredentials } from './machine-credentials';
 
-// Token endpoints for integration clients: OAuth 2 client credentials, and a username / password login for clients that cannot do OAuth.
 @Public()
 @Controller('auth')
 export class TokenController {
   constructor(private readonly machineAuth: MachineAuthService) {}
 
-  // Accepts JSON and form bodies; extras some clients add (`resource`, `scope`, a capitalised `Scope`, `client_name`) are ignored.
+  // Accepts JSON and form bodies (RFC 6749 only requires form); extra parameters such as `scope` are ignored.
   @Post('oauth/token')
   @HttpCode(200)
   @Header('Cache-Control', 'no-store')
@@ -41,19 +33,5 @@ export class TokenController {
     const issued = this.machineAuth.issueAccessToken(client);
 
     return { token_type: 'Bearer', expires_in: issued.expiresIn, access_token: issued.token };
-  }
-
-  // Takes `{username, password}` as JSON and answers with `token`, the shape simple token-login clients expect.
-  @Post('token')
-  @HttpCode(200)
-  @Header('Cache-Control', 'no-store')
-  async issuePasswordToken(@Body(new ZodValidationPipe(passwordTokenRequestSchema)) body: PasswordTokenRequest): Promise<PasswordTokenResponse> {
-    const client = await this.machineAuth.authenticateClient(body.username, body.password);
-
-    if (!client) throw new UnauthorizedException('The username or password is incorrect.');
-
-    const issued = this.machineAuth.issueAccessToken(client);
-
-    return { token: issued.token, token_type: 'Bearer', expires_in: issued.expiresIn };
   }
 }

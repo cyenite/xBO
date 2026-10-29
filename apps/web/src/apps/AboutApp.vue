@@ -13,7 +13,7 @@ const host = hostLabels[detectHostOs()];
     <XboMark class="size-16" />
     <div>
       <h3 class="text-display font-semibold text-ink">xBO</h3>
-      <p class="mt-0.5 text-body text-ink-muted">Back office for FMCG operations</p>
+      <p class="mt-0.5 text-body text-ink-muted">Back office for property management</p>
     </div>
     <dl class="figures grid grid-cols-[auto_auto] gap-x-4 gap-y-1 text-body">
       <dt class="text-right text-ink-muted">Version</dt><dd class="selectable text-left text-ink">{{ version }}</dd>

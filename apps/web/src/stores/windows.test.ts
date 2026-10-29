@@ -20,10 +20,10 @@ describe('window manager', () => {
   it('opens a second window for multi-instance apps on request', () => {
     const store = useWindowsStore();
 
-    store.open('sales-orders');
-    store.open('sales-orders', { isNewWindow: true });
+    store.open('rent-roll');
+    store.open('rent-roll', { isNewWindow: true });
 
-    expect(store.windowsForApp('sales-orders').map((desktopWindow) => desktopWindow.title)).toEqual(['Sales orders', 'Sales orders 2']);
+    expect(store.windowsForApp('rent-roll').map((desktopWindow) => desktopWindow.title)).toEqual(['Rent roll', 'Rent roll 2']);
   });
 
   it('focuses the most recently opened window', () => {
@@ -37,7 +37,7 @@ describe('window manager', () => {
 
   it('restores a snapped window to its previous size', () => {
     const store = useWindowsStore();
-    const desktopWindow = store.open('sales-orders');
+    const desktopWindow = store.open('rent-roll');
 
     if (!desktopWindow) throw new Error('window did not open');
 

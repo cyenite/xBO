@@ -13,7 +13,7 @@ async function seed(): Promise<void> {
   const password = process.env.XBO_SEED_PASSWORD ?? randomBytes(12).toString('base64url');
   const database = drizzle(pool, { casing: 'snake_case' });
   const organizationCode = process.env.XBO_SEED_ORGANIZATION_CODE ?? 'DEMO';
-  const organizationName = process.env.XBO_SEED_ORGANIZATION_NAME ?? 'Demo Distributors';
+  const organizationName = process.env.XBO_SEED_ORGANIZATION_NAME ?? 'Demo Property Managers';
 
   try {
     await database.insert(organizations).values({ code: organizationCode, name: organizationName }).onConflictDoNothing({ target: organizations.code });

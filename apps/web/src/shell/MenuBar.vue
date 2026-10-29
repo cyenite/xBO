@@ -31,7 +31,7 @@ const preferences = usePreferencesStore();
 
 const focused = computed(() => windows.focusedWindow);
 const focusedApp = computed(() => (focused.value ? findApp(focused.value.appId) : undefined));
-const organizationName = 'Demo Distributors Ltd';
+const organizationName = 'Demo Property Managers Ltd';
 </script>
 
 <template>

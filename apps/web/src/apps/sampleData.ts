@@ -1,67 +1,69 @@
 import type { StatusTone } from '../components/status';
 
-// Illustrative records so the shell can be evaluated before the API modules exist (plan Phase 4).
-export const orderStatuses = [
-  { value: 'draft', label: 'Draft', tone: 'neutral' },
-  { value: 'credit-block', label: 'Credit block', tone: 'danger' },
-  { value: 'confirmed', label: 'Confirmed', tone: 'info' },
-  { value: 'short-stock', label: 'Short stock', tone: 'warning' },
-  { value: 'delivered', label: 'Delivered', tone: 'info' },
-  { value: 'invoiced', label: 'Invoiced', tone: 'success' },
+// Illustrative records so the shell can be evaluated before the API modules exist (plan Phase 3).
+export const unitStatuses = [
+  { value: 'vacant', label: 'Vacant', tone: 'neutral' },
+  { value: 'current', label: 'Current', tone: 'success' },
+  { value: 'arrears', label: 'In arrears', tone: 'danger' },
+  { value: 'renewal-due', label: 'Renewal due', tone: 'warning' },
+  { value: 'notice-given', label: 'Notice given', tone: 'info' },
 ] as const satisfies readonly { value: string; label: string; tone: StatusTone }[];
 
-export type OrderStatus = (typeof orderStatuses)[number]['value'];
+export type UnitStatus = (typeof unitStatuses)[number]['value'];
 
-export interface OrderLine {
-  sku: string;
-  product: string;
-  unit: string;
-  quantity: number;
-  unitPrice: number;
-  amount: number;
-}
-
-export interface SalesOrder {
-  number: string;
+export interface LedgerEntry {
   date: string;
-  route: string;
-  status: OrderStatus;
-  source: 'Field app' | 'Back office';
   amount: number;
-  salesRep: string;
-  customer: string;
-  lineCount: number;
-  lines: OrderLine[];
+  description: string;
 }
 
-const customers = [
-  'Mama Njeri Shop',
-  'Kilimani Mini Mart',
-  'Baraka Wholesalers',
-  'Upendo General Store',
-  'Riverside Supermarket',
-  'Tumaini Distributors',
-  'Jamhuri Kiosk',
-  'Greenfield Hotel',
-  'Neema Retailers',
-  'Lakeview Cash and Carry',
-  'Sunrise Duka',
-  'Mwangaza Traders',
+export interface RentRollUnit {
+  unit: string;
+  property: string;
+  unitType: string;
+  rent: number;
+  balance: number;
+  status: UnitStatus;
+  tenant: string | null;
+  leaseEnd: string | null;
+  leaseStart: string | null;
+  ledger: LedgerEntry[];
+}
+
+const properties = [
+  { name: 'Kilimani Heights', prefix: 'KH' },
+  { name: 'Riverside Court', prefix: 'RC' },
+  { name: 'Ngong Road Plaza', prefix: 'NP' },
+  { name: 'Lavington Gardens', prefix: 'LG' },
 ];
 
-const products = [
-  { sku: 'SOD-500-24', product: 'Soda 500 ml', unit: 'Case of 24', unitPrice: 1150 },
-  { sku: 'WAT-1L-12', product: 'Mineral water 1 L', unit: 'Case of 12', unitPrice: 540 },
-  { sku: 'MAZ-2KG-12', product: 'Maize flour 2 kg', unit: 'Bale of 12', unitPrice: 1980 },
-  { sku: 'OIL-1L-12', product: 'Cooking oil 1 L', unit: 'Case of 12', unitPrice: 3360 },
-  { sku: 'TEA-250-40', product: 'Tea leaves 250 g', unit: 'Carton of 40', unitPrice: 5200 },
-  { sku: 'SOA-175-24', product: 'Bar soap 175 g', unit: 'Carton of 24', unitPrice: 1440 },
-  { sku: 'JUI-1L-12', product: 'Mango juice 1 L', unit: 'Case of 12', unitPrice: 1620 },
+const unitTypes = [
+  { unitType: 'Studio', rent: 28_000, serviceCharge: 3_000 },
+  { unitType: '1 bedroom', rent: 42_000, serviceCharge: 4_000 },
+  { unitType: '2 bedroom', rent: 65_000, serviceCharge: 5_500 },
+  { unitType: '3 bedroom', rent: 95_000, serviceCharge: 7_500 },
+  { unitType: 'Shop', rent: 80_000, serviceCharge: 9_000 },
 ];
 
-const routes = ['NRB-East 01', 'NRB-East 02', 'NRB-West 04', 'Thika 02', 'Kiambu 03', 'Machakos 01'];
-const reps = ['A. Wanjiku', 'B. Otieno', 'C. Mutua', 'D. Achieng', 'E. Kiprono'];
-const statusCycle: OrderStatus[] = ['confirmed', 'invoiced', 'delivered', 'credit-block', 'confirmed', 'invoiced', 'short-stock', 'draft', 'invoiced', 'delivered'];
+const tenants = [
+  'A. Wanjiku',
+  'B. Otieno',
+  'C. Mutua',
+  'D. Achieng',
+  'E. Kiprono',
+  'F. Njoroge',
+  'G. Auma',
+  'H. Kamau',
+  'Upendo Pharmacy Ltd',
+  'I. Chebet',
+  'J. Mwangi',
+  'Baraka Cafe Ltd',
+  'K. Wafula',
+  'L. Nyambura',
+];
+
+const paymentMethods = ['M-Pesa', 'M-Pesa', 'M-Pesa', 'Bank transfer', 'Cheque'];
+const statusCycle: UnitStatus[] = ['current', 'current', 'arrears', 'current', 'renewal-due', 'vacant', 'current', 'notice-given', 'current', 'arrears'];
 
 function seeded(seed: number): () => number {
   let state = seed;
@@ -77,38 +79,62 @@ function pick<T>(items: readonly T[], random: () => number): T {
   return items[Math.floor(random() * items.length)] as T;
 }
 
-export function buildSampleOrders(count = 46): SalesOrder[] {
+function monthStart(monthsAgo: number): string {
+  return `2026-${String(10 - monthsAgo).padStart(2, '0')}-01`;
+}
+
+function buildLedger(rent: number, serviceCharge: number, status: UnitStatus, random: () => number): LedgerEntry[] {
+  const ledger: LedgerEntry[] = [];
+  const method = pick(paymentMethods, random);
+  const isInArrears = status === 'arrears';
+
+  for (let monthsAgo = 2; monthsAgo >= 0; monthsAgo -= 1) {
+    const date = monthStart(monthsAgo);
+    const paidOn = `${date.slice(0, 8)}0${3 + Math.floor(random() * 5)}`;
+    const isUnpaid = isInArrears && monthsAgo < 2;
+
+    ledger.push({ date, amount: rent, description: 'Rent' });
+    ledger.push({ date, amount: serviceCharge, description: 'Service charge' });
+
+    if (!isUnpaid) ledger.push({ date: paidOn, amount: -(rent + serviceCharge), description: `Payment, ${method}` });
+  }
+
+  return ledger;
+}
+
+export function buildSampleUnits(count = 46): RentRollUnit[] {
   const random = seeded(2026);
-  const start = new Date('2026-10-27T08:00:00');
 
   return Array.from({ length: count }, (_, index) => {
-    const lineCount = 1 + Math.floor(random() * 5);
-    const lines: OrderLine[] = Array.from({ length: lineCount }, () => {
-      const product = pick(products, random);
-      const quantity = 2 + Math.floor(random() * 38);
-
-      return { ...product, quantity, amount: quantity * product.unitPrice };
-    });
-    const date = new Date(start.getTime() - Math.floor(index / 6) * 86_400_000);
+    const property = properties[index % properties.length] as (typeof properties)[number];
+    const type = pick(unitTypes, random);
+    const status = statusCycle[index % statusCycle.length] as UnitStatus;
+    const floor = 1 + Math.floor(index / properties.length / 3);
+    const door = 1 + (Math.floor(index / properties.length) % 3);
+    const startYear = 2024 + Math.floor(random() * 2);
+    const startMonth = 1 + Math.floor(random() * 12);
+    const endYear = status === 'renewal-due' || status === 'notice-given' ? 2026 : startYear + 3;
+    const endMonth = status === 'renewal-due' || status === 'notice-given' ? 12 : startMonth;
+    const isVacant = status === 'vacant';
+    const ledger = isVacant ? [] : buildLedger(type.rent, type.serviceCharge, status, random);
 
     return {
-      number: `SO-${String(28_431 - index).padStart(6, '0')}`,
-      date: date.toISOString().slice(0, 10),
-      route: pick(routes, random),
-      status: statusCycle[index % statusCycle.length] as OrderStatus,
-      source: random() > 0.25 ? 'Field app' : 'Back office',
-      amount: lines.reduce((sum, line) => sum + line.amount, 0),
-      salesRep: pick(reps, random),
-      customer: pick(customers, random),
-      lineCount,
-      lines,
+      unit: `${property.prefix}-${floor}${String(door).padStart(2, '0')}`,
+      property: property.name,
+      unitType: type.unitType,
+      rent: type.rent,
+      balance: ledger.reduce((sum, entry) => sum + entry.amount, 0),
+      status,
+      tenant: isVacant ? null : pick(tenants, random),
+      leaseEnd: isVacant ? null : `${endYear}-${String(endMonth).padStart(2, '0')}-01`,
+      leaseStart: isVacant ? null : `${startYear}-${String(startMonth).padStart(2, '0')}-01`,
+      ledger,
     };
   });
 }
 
-export function statusMeta(status: OrderStatus) {
-  return orderStatuses.find((candidate) => candidate.value === status) ?? orderStatuses[0];
+export function statusMeta(status: UnitStatus) {
+  return unitStatuses.find((candidate) => candidate.value === status) ?? unitStatuses[0];
 }
 
 export const kes = new Intl.NumberFormat('en-KE', { style: 'currency', currency: 'KES', minimumFractionDigits: 2 });
-export const quantityFormat = new Intl.NumberFormat('en-KE');

@@ -4,7 +4,6 @@ import { organizationSummarySchema } from './organizations';
 export const machineAuthSchemes = [
   { value: 'basic', label: 'HTTP basic' },
   { value: 'bearer', label: 'Bearer token' },
-  { value: 'token-header', label: 'TOKEN header' },
   { value: 'api-key-header', label: 'X-Api-Key header' },
 ] as const;
 
@@ -47,7 +46,7 @@ export const principalResponseSchema = z.discriminatedUnion('kind', [
   }),
 ]);
 
-// Field names follow RFC 6749 and the bodies integration clients send, so they stay snake_case.
+// Field names follow RFC 6749, so they stay snake_case.
 export const clientCredentialsTokenRequestSchema = z.object({
   client_id: z.string().min(1).optional(),
   grant_type: z.literal('client_credentials'),
@@ -58,17 +57,6 @@ export const accessTokenResponseSchema = z.object({
   token_type: z.literal('Bearer'),
   expires_in: z.number().int().positive(),
   access_token: z.string(),
-});
-
-export const passwordTokenRequestSchema = z.object({
-  username: z.string().min(1),
-  password: z.string().min(1),
-});
-
-export const passwordTokenResponseSchema = z.object({
-  token: z.string(),
-  token_type: z.literal('Bearer'),
-  expires_in: z.number().int().positive(),
 });
 
 export const machineClientSchema = z.object({
@@ -113,8 +101,6 @@ export type SessionResponse = z.infer<typeof sessionResponseSchema>;
 export type PrincipalResponse = z.infer<typeof principalResponseSchema>;
 export type MachineClientToken = z.infer<typeof machineClientTokenSchema>;
 export type AccessTokenResponse = z.infer<typeof accessTokenResponseSchema>;
-export type PasswordTokenRequest = z.infer<typeof passwordTokenRequestSchema>;
-export type PasswordTokenResponse = z.infer<typeof passwordTokenResponseSchema>;
 export type SwitchOrganizationRequest = z.infer<typeof switchOrganizationRequestSchema>;
 export type CreateMachineClientRequest = z.infer<typeof createMachineClientRequestSchema>;
 export type CreatedMachineClientResponse = z.infer<typeof createdMachineClientResponseSchema>;

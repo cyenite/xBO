@@ -6,27 +6,28 @@ product
 
 ## Users
 
-People who run the back office of large FMCG manufacturers and distributors, inside the software for most of their working day:
+People who run the back office of property management companies, letting agents and landlords with large portfolios, inside the software for most of their working day:
 
-- **Back-office clerks** entering orders, invoicing, settling van routes, adjusting stock. High-volume, keyboard-driven, repetitive work where seconds per document add up to hours.
-- **Managers and executives** approving credit releases, discounts and write-offs, watching exceptions and performance. Short, frequent visits that need answers at a glance.
-- **Finance and accounting** reconciling payments, closing periods, chasing receivables, producing reports. Precision and audit trail matter more than speed.
-- **Warehouse and logistics staff** receiving goods, loading vans, counting stock, often on shared terminals with gloves, noise and interruptions.
+- **Property and leasing officers** letting units, drafting and renewing leases, handling notices, move-ins and move-outs. Many open records at once, constant interruptions from tenants.
+- **Accounts clerks** running monthly billing, matching M-Pesa and bank payments to tenants, chasing arrears. High-volume, keyboard-driven, repetitive work where seconds per payment add up to hours at month start.
+- **Managers and owners' representatives** approving work orders, write-offs and owner remittances, watching occupancy and arrears. Short, frequent visits that need answers at a glance.
+- **Finance and accounting** reconciling bank and mobile-money statements, closing periods, producing owner statements and tax returns. Precision and audit trail matter more than speed.
+- **Maintenance coordinators** logging faults, assigning contractors, tracking quotes and costs.
 
-Many of these users already work in SAP, an older ERP, or spreadsheets, and they keep several documents open at once.
+Many of these users already work in spreadsheets, an accounting package with add-ons, or an older property system, and they keep several records open at once.
 
 ## Product Purpose
 
-xBO is the system of record for an FMCG business: master data, pricing, order to cash, credit, inventory with batches and expiry, van sales and route settlement, empties, finance and trade spend. It runs in the browser and as a desktop app, and connects to field sales apps, e-commerce and partner systems through an open integration API.
+xBO is the system of record for a property management business: properties and units, owners, tenants and leases, rent and service-charge billing, metered utilities, collections and arrears, deposits, maintenance and inspections, owner statements and remittances, and the accounting under all of it. It runs in the browser and as a desktop app, and connects to payment services, tenant portals, banks and messaging providers through an open integration API.
 
-Success: a large enterprise's buyer sees it once and believes it is the most carefully made business software they have used; clerks finish their daily volume faster than in their old ERP; finance trusts every number.
+Success: a property manager sees it once and believes it is the most carefully made business software they have used; clerks match the month's payments faster than they did in spreadsheets; owners and finance trust every number.
 
 ## Brand Personality
 
 **Precise, calm, trustworthy.**
 
 - Voice: plain, exact, unhurried. Labels say what things are; messages say what happened and what to do next. No hype, no jokes in workflows.
-- Feel: native OS-grade, as if Apple or Microsoft had built an ERP. Restrained, quietly confident, nothing decorative.
+- Feel: native OS-grade, as if Apple or Microsoft had built a property back office. Restrained, quietly confident, nothing decorative.
 - Emotional goal: control. The user always knows where they are, what changed, and that nothing was lost.
 
 References and what to take from each:

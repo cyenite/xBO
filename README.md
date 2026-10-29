@@ -1,6 +1,6 @@
 # xBO
 
-Back office for FMCG operations: master data, pricing, order to cash, credit, inventory with batches and expiry, van sales and route settlement, empties, finance and trade spend. It runs in the browser and as a desktop app for Windows, macOS and Linux, and connects to field sales apps, e-commerce and partner systems through an open integration API.
+Back office for property management: properties and units, owners, tenants and leases, rent and service-charge billing, collections and arrears, deposits, maintenance and inspections, owner statements and accounting. It runs in the browser and as a desktop app for Windows, macOS and Linux, and connects to payment services, tenant portals, banks and messaging providers through an open integration API.
 
 ## Repository
 
@@ -81,9 +81,8 @@ pnpm --filter @xbo/api db:generate --name describe_the_change
 | Scheme | How |
 | --- | --- |
 | OAuth 2 client credentials | `POST /api/v1/auth/oauth/token` with `grant_type=client_credentials`, `client_id` and `client_secret` (JSON, form, or HTTP basic), then `Authorization: Bearer <access_token>` |
-| Username / password token | `POST /api/v1/auth/token` with `{"username": "<client id>", "password": "<secret>"}`, then `Authorization: Bearer <token>` |
 | HTTP basic | `Authorization: Basic base64(<client id>:<secret>)` on every request |
-| Static token | Create one at `POST /api/v1/machine-clients/{id}/tokens`, then send it as `Authorization: Bearer <token>`, a `TOKEN` header or an `X-Api-Key` header |
+| Static token | Create one at `POST /api/v1/machine-clients/{id}/tokens`, then send it as `Authorization: Bearer <token>` or an `X-Api-Key` header |
 
 `GET /api/v1/auth/principal` shows who a request authenticated as, which helps when setting up an integration.
 

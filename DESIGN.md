@@ -1,6 +1,6 @@
 ---
 name: xBO
-description: Back office for FMCG operations, built like a native desktop.
+description: Back office for property management, built like a native desktop.
 colors:
   primary: "#006f7c"
   primary-hover: "#00606d"
@@ -131,13 +131,13 @@ components:
 
 **Creative North Star: "The Operating System for the Back Office"**
 
-xBO should look like the operating system itself grew an ERP. The user is at a desk under office light, with several documents open, moving fast with the keyboard. Every surface follows the grammar people already trust from macOS and Windows 11: a menu bar that belongs to the focused window, a taskbar of running work, windows that open, stack, snap and remember where they were. Familiarity is the feature. Craft shows in alignment, rhythm, exact figures and calm restraint, not in ornament.
+xBO should look like the operating system itself grew a back office. The user is at a desk under office light, with several documents open, moving fast with the keyboard. Every surface follows the grammar people already trust from macOS and Windows 11: a menu bar that belongs to the focused window, a taskbar of running work, windows that open, stack, snap and remember where they were. Familiarity is the feature. Craft shows in alignment, rhythm, exact figures and calm restraint, not in ornament.
 
-Density is a virtue here. A clerk sees forty order lines without scrolling, every number in tabular figures and right-aligned, every label exact. Hierarchy comes from type weight, spacing and the two neutral layers (window and chrome), not from boxes, cards and colour. Colour is a signal: the deep teal marks the primary action, the current selection and focus; red, amber and green mark state, always with an icon and words.
+Density is a virtue here. A clerk sees forty units of a rent roll without scrolling, every number in tabular figures and right-aligned, every label exact. Hierarchy comes from type weight, spacing and the two neutral layers (window and chrome), not from boxes, cards and colour. Colour is a signal: the deep teal marks the primary action, the current selection and focus; red, amber and green mark state, always with an icon and words.
 
 This system rejects, by name, the PRODUCT.md anti-references: **SAP GUI / classic SAP** (grey forms, cryptic codes, dated chrome), **generic SaaS admin** (sidebar + stat cards + charts), **Odoo and typical web ERPs** (busy pages, form-after-form navigation that loses context) and **over-styled glass UI** (heavy blur and gradients behind data).
 
-The default theme is light, because the scene is a lit office in the working day; dark follows the operating system for evening shifts and warehouses.
+The default theme is light, because the scene is a lit office in the working day; dark follows the operating system for evening work.
 
 **Key Characteristics:**
 - Desktop grammar: menu bar, taskbar, Start launcher, command palette, windows with snap layouts.

@@ -1,45 +1,45 @@
 # xBO (Back Office): development plan
 
-xBO is a back-office / ERP system for FMCG manufacturers and distributors. It covers the operational feature set large enterprise ERPs offer FMCG companies, with a desktop-style interface inspired by macOS and Windows 11, and an open integration API that field sales apps, e-commerce stores and partner systems connect to. One codebase ships as a **web app** and as a **desktop app** for Windows, macOS and Linux.
+xBO is a back office for property management companies, letting agents and landlords with large portfolios. It covers properties and units, owners, tenants and leases, billing, collections, deposits, maintenance, owner accounting and the general ledger, with a desktop-style interface inspired by macOS and Windows 11, and an open integration API that payment services, tenant portals, banks and messaging providers connect to. One codebase ships as a **web app** and as a **desktop app** for Windows, macOS and Linux.
 
-Date: 2026-10-28. Status: Phase 0 in progress: monorepo, API skeleton, shared contracts, desktop shell UI, Tauri wrapper, database and migrations, session and machine-client auth, organisations and tenancy scope, and CI are in place.
+Date: 2026-10-29. Status: Phase 0 in progress: monorepo, API skeleton, shared contracts, desktop shell UI, Tauri wrapper, database and migrations, session and machine-client auth, organisations and tenancy scope, and CI are in place.
 
 Product and visual direction live in `PRODUCT.md` and `DESIGN.md` at the repository root; every UI change follows them.
 
 ## 1. Goals
 
-1. **Integrate openly.** Field sales apps, e-commerce stores and partner systems connect through a documented REST API in three directions (they call xBO, xBO sends them webhooks, they poll xBO feeds), authenticating with whichever standard scheme they support: OAuth 2 client credentials, a username / password token login, bearer tokens, HTTP basic, or an API key header.
-2. **Cover FMCG operations end to end:** master data, pricing, order to cash, credit, inventory with batches and FEFO, van sales and route settlement, empties, logistics, trade spend, procurement, finance, manufacturing and quality.
-3. **Feel like a desktop application:** windows, a dock/taskbar, menus, keyboard shortcuts, dense data grids, many documents open side by side.
-4. **Be correct first:** immutable posted documents, double-entry accounting, idempotent integrations, full audit trail.
+1. **Integrate openly.** Payment gateways, banks, tenant portals and messaging providers connect through a documented REST API in three directions (they call xBO, xBO sends them webhooks, they poll xBO feeds), authenticating with standard schemes: OAuth 2 client credentials, HTTP basic, bearer tokens or an API key header.
+2. **Cover property management end to end:** portfolio, owners, tenants and leases, rent and service-charge billing, metered utilities, collections and arrears, deposits, maintenance and inspections, owner statements and remittances, and accounting.
+3. **Feel like a desktop application:** windows, a dock/taskbar, menus, keyboard shortcuts, dense data grids, many records open side by side.
+4. **Be correct first:** immutable posted documents, double-entry accounting, client money kept separate per owner, idempotent integrations, full audit trail.
 
 ## 2. Architecture decisions
 
 | Decision | Choice | Why |
 | --- | --- | --- |
-| Shape | Modular monolith | One deployable, clear module boundaries, no distributed transactions between stock and accounting |
+| Shape | Modular monolith | One deployable, clear module boundaries, no distributed transactions between billing and accounting |
 | Language | TypeScript end to end (TypeScript 6.x, pinned) | One language for API, UI and contracts; request and response types are shared, not duplicated. TypeScript 7 is not used yet: its native compiler has no JavaScript API, which the Nest CLI, tsup and vue-tsc need |
-| Backend | NestJS 12 on Fastify (`apps/api`) | Module system maps one-to-one to the ERP modules below; dependency injection, guards and interceptors suit a large codebase; Fastify for throughput |
-| Database | PostgreSQL 16 with Drizzle ORM and drizzle-kit migrations | ERP needs: exact `numeric`, row-level locking for stock, partial and expression indexes, transactional DDL. Drizzle keeps SQL visible and typed |
-| Money and quantities | `numeric(19,4)` columns read as strings, decimal arithmetic with a decimal library, never JavaScript floats | Rounding errors are unacceptable in invoices and stock |
+| Backend | NestJS 12 on Fastify (`apps/api`) | Module system maps one-to-one to the modules below; dependency injection, guards and interceptors suit a large codebase; Fastify for throughput |
+| Database | PostgreSQL 16 with Drizzle ORM and drizzle-kit migrations | Exact `numeric`, row-level locking for payment allocation, partial and expression indexes, transactional DDL. Drizzle keeps SQL visible and typed |
+| Money and quantities | `numeric(19,4)` columns read as strings, decimal arithmetic with a decimal library, never JavaScript floats | Rounding errors are unacceptable in invoices, balances and owner statements |
 | Validation and contracts | zod schemas in `packages/contracts`, used by the API, the UI and integration contract tests | One definition of every payload, including integration payloads |
-| Queue, cache, locks | Redis + BullMQ | Integration jobs, document posting, scheduled runs, retries with backoff |
-| Realtime | WebSockets through a NestJS gateway | Live updates in open windows (stock, document status, integration monitor) |
+| Queue, cache, locks | Redis + BullMQ | Billing runs, payment matching, reminders, integration jobs, retries with backoff |
+| Realtime | WebSockets through a NestJS gateway | Live updates in open windows (balances, document status, integration monitor) |
 | API | REST JSON under `/api/v1`, OpenAPI generated from the zod contracts | One API for the UI and third parties |
-| Auth | Session cookies for the UI (desktop app uses the same login); machine clients per organisation for integrations, accepted over OAuth 2 client credentials, a username / password token login, bearer tokens, HTTP basic, and `TOKEN` / `X-Api-Key` headers | Integration clients range from modern OAuth clients to simple scripts; each must reach xBO with the scheme it already supports |
-| Tenancy | Single database, `organization_id` on every business row, enforced in the repository layer and by policies | One xBO install can serve several companies; external systems identify the company by `organization_code` |
+| Auth | Session cookies for the UI (desktop app uses the same login); machine clients per organisation for integrations, accepted over OAuth 2 client credentials, bearer tokens, HTTP basic and an `X-Api-Key` header | Integration clients range from OAuth-capable services to simple scripts; all four are standard and widely supported |
+| Tenancy | Single database, `organization_id` on every business row, enforced in the repository layer and by policies | One xBO install can serve several management companies; a machine client belongs to exactly one, so integrations never name it |
 | Frontend | Vue 3 + TypeScript + Vite SPA (`apps/web`), Pinia, Tailwind CSS v4, reka-ui primitives, Remix Icon compiled per icon by unplugin-icons | A mature, well-documented component ecosystem. A plain SPA rather than Nuxt because the desktop shell manages windows, not pages |
-| Desktop | Tauri 2 (`apps/desktop`) wrapping the same web build | Installers of about 10 MB instead of 100 MB or more, low memory use, strict security model; the Rust side stays small (window, updater, later printers and scales). Chosen over Electron |
+| Desktop | Tauri 2 (`apps/desktop`) wrapping the same web build | Installers of about 10 MB instead of 100 MB or more, low memory use, strict security model; the Rust side stays small (window, updater, later receipt printers). Chosen over Electron |
 | Repository | pnpm workspace monorepo: `apps/api`, `apps/web`, `apps/desktop`, `packages/contracts`, `docs/` | One change can touch API, UI and contracts together |
 
 ### Core domain patterns
 
-1. **Organisational structure:** Company -> Branch / Depot (plant) -> Warehouse -> Location (bin, van, quarantine, empties yard); Sales area = sales organisation + channel + division.
-2. **Document framework:** every business step is a document with a header, lines, a status machine, a number from a number range, and links to predecessor and successor documents (document flow). Posted documents are immutable; corrections are reversals or credit documents.
-3. **Condition technique:** one rules engine for prices, discounts, surcharges, taxes, free goods, listing / exclusion and substitution: ordered procedure steps, access sequences (most specific key first), validity dates, scales.
-4. **Stock key:** product + location + batch + stock status (unrestricted, quality, blocked, in transit). Every movement is a stock journal entry; balances are derived and cached.
-5. **Postings:** every stock and billing document posts balanced journal entries to the general ledger through account determination rules.
-6. **Blocks with worklists:** credit, delivery, billing and quality blocks, each released by a role from a worklist.
+1. **Portfolio structure:** Organisation (management company) -> Owner -> Property -> Block (optional) -> Unit. A unit has a type, size, meters and standard charges; a property can have several owners with shares.
+2. **Document framework:** every business step is a document with a header, lines, a status machine, a number from a number range, and links to predecessor and successor documents (lease -> invoice -> payment -> receipt). Posted documents are immutable; corrections are reversals or credit notes.
+3. **Lease as the billing contract:** a lease carries the rent, escalation schedule, recurring charges, deposit, billing day and due terms. Billing runs read active leases; nothing is billed from a unit directly.
+4. **Tenant ledger:** every charge, payment, credit and deposit movement is a ledger entry on the tenant account per lease; balances and ageing are derived and cached.
+5. **Postings:** every billing, payment and remittance document posts balanced journal entries to the general ledger through account determination rules, with client money (rent collected for owners) kept in owner sub-ledgers.
+6. **Approvals with worklists:** write-offs, work order quotes over a limit, deposit refunds and owner remittances, each released by a role from a worklist.
 7. **Outbox / inbox:** every integration message is persisted before sending or after receiving, with an idempotency key, retry state and replay.
 
 ## 3. Backend module map
@@ -47,26 +47,17 @@ Product and visual direction live in `PRODUCT.md` and `DESIGN.md` at the reposit
 | Module | Owns |
 | --- | --- |
 | `Core` | Organisations, users, roles and permissions, settings, number ranges, audit log, attachments, approvals engine, document framework, notifications |
-| `MasterData` | Products, units of measure and barcodes, categories and brands, customers / outlets and hierarchies, suppliers / principals, warehouses and locations, vehicles, routes and territories, sales users, tax codes, payment terms |
-| `Pricing` | Condition types, procedures, condition records, price lists, customer special prices, blanket agreements, free goods, listing and exclusion, substitution |
-| `Sales` | Quotations, sales orders, availability check and allocation, credit check, order tracking |
-| `Credit` | Credit segments, limits, exposure, blocks, release worklist, user / van credit limits |
-| `Inventory` | Batches and expiry, stock journal and balances, goods receipts, transfers and requisitions, adjustments, stock takes, reconciliation, serial numbers, FEFO engine |
-| `Logistics` | Deliveries, picking, packing, gate passes, trips, delivery planner, proof of delivery |
-| `DSD` | Visit plans, tours, van loading (check-out), van sales, check-in, route settlement, cash reconciliation |
-| `Empties` | Returnable items, deposits, customer empties balances |
-| `Billing` | Invoices, credit and debit notes, credit note requests, e-invoicing (eTIMS, EFRIS) |
-| `Returns` | Delivery returns, goods (market) returns, inspection and disposition |
-| `Receivables` | Payments and collections (cash, M-Pesa, MTN MoMo, cheque, bank), allocation, statements, ageing, dunning |
-| `Finance` | Chart of accounts, journals, account determination, AP, bank, periods and close, financial statements, expenses, incentives |
-| `Trade` | Promotions, rebates (condition contracts), loyalty balances, claims and deductions |
-| `Procurement` | Requisitions, purchase orders, supplier invoices, three-way match |
-| `Production` | Recipes, production orders, consumption and output, co-packing |
-| `Quality` | Inspection lots, results, usage decisions, certificates |
-| `Planning` | Sales targets, demand forecast, replenishment proposals |
-| `People` | Minimal HR bridge for what field apps post: leave categories and requests, expense categories |
+| `Portfolio` | Owners, properties, blocks, units, unit types, amenities, meters, charge types, tax codes, payment terms |
+| `Leasing` | Applicants, tenants (people and companies), guarantors, leases, rent escalations, recurring charges, renewals, notices, move-in and move-out |
+| `Billing` | Billing runs, invoices, metered utility billing, late-payment penalties, credit and debit notes, e-invoicing (eTIMS) for VAT-registered landlords |
+| `Collections` | Payments (M-Pesa, bank, card, cheque, cash), matching by account reference, allocation, unallocated credit, receipts, arrears ageing, reminders, demand letters, tenant statements |
+| `Deposits` | Deposits held per lease, top-ups, deductions on move-out, refunds |
+| `OwnerAccounting` | Management agreements and fees, owner sub-ledgers, expenses charged to owners, owner statements, remittances |
+| `Maintenance` | Work orders, contractors (vendors), quotes and approvals, costs recovered from owners or tenants, preventive schedules |
+| `Inspections` | Move-in, move-out and routine inspections, room-by-room condition, photos, damage pricing |
+| `Finance` | Chart of accounts, journals, account determination, accounts payable, bank and mobile-money reconciliation, periods and close, financial statements, rental income tax reports |
 | `Integration` | Integration API, webhooks, polling feeds, outbox / inbox, mappings, schedules, monitor, replay |
-| `Reporting` | Operational reports, margin analysis, exports |
+| `Reporting` | Occupancy, arrears, rent roll, yield and expense reports, exports |
 
 ## 4. Desktop UI design
 
@@ -74,19 +65,19 @@ Product and visual direction live in `PRODUCT.md` and `DESIGN.md` at the reposit
 
 - **Top menu bar** (macOS): xBO menu, the focused window's app menus (File, Edit, View, Go, Window, Help), and on the right: organisation switcher, sync status, notifications, clock, user.
 - **Taskbar / dock** (Windows 11 centred taskbar with macOS dock behaviour): pinned apps, running windows with indicators, a Start launcher, and a system tray area.
-- **Start launcher:** apps grouped by module, recent documents, search.
+- **Start launcher:** apps grouped by module, recent records, search.
 - **Command palette** (Ctrl/Cmd+K, Spotlight style): open apps, find documents by number, run actions.
-- **Windows:** draggable, resizable, minimise / maximise / restore, focus order, double-click title to maximise, snap to halves and quarters (Windows 11 snap layouts on hover over maximise), remember positions per user. Several windows of the same app (two sales orders side by side).
+- **Windows:** draggable, resizable, minimise / maximise / restore, focus order, double-click title to maximise, snap to halves and quarters (Windows 11 snap layouts on hover over maximise), remember positions per user. Several windows of the same app (two leases side by side).
 - **Window chrome setting:** "macOS" (traffic-light buttons on the left) or "Windows" (caption buttons on the right), defaulting to the user's OS.
 - **Materials:** translucent "Mica / vibrancy" backgrounds with backdrop blur, 8 to 12 px rounded corners, soft layered shadows, light and dark themes following the OS.
-- **Notification centre** and toasts for document events and integration failures.
-- **Deep links:** the URL encodes the focused window (`/#/w/sales-order/SO-000123`) so links open the right document.
+- **Notification centre** and toasts for document events, unmatched payments and integration failures.
+- **Deep links:** the URL encodes the focused window (`/#/w/lease/LS-000123`) so links open the right document.
 
 ### Inside windows
 
 - **Data grid** (the workhorse): virtualised rows, column chooser, sort, filter, group, inline edit, keyboard navigation, copy / paste to Excel, export, saved views.
 - **Document window layout:** header fields, a lines grid, a side panel (status, document flow, attachments, audit), a toolbar with actions allowed by the document's status.
-- **Master-detail** for master data, **wizards** for multi-step flows (route settlement), **dashboards** as widgets.
+- **Master-detail** for portfolio and tenant records, **wizards** for multi-step flows (letting a unit, ending a lease), **dashboards** as widgets.
 - Desktop-grade keyboard support: Tab order, Enter to move down in grids, F2 edit, Ctrl+S save, Esc cancel, Ctrl+P print.
 
 ### Accessibility and density
@@ -101,12 +92,12 @@ Each step lists deliverables. A step is done when its tests pass in CI and its l
 
 - **0.1** pnpm monorepo, README, `.gitignore`, editorconfig, PRODUCT.md and DESIGN.md. *(done)*
 - **0.2** API: NestJS on Fastify, `/api/v1/health`, Vitest with SWC for decorator metadata. *(done)*
-- **0.3** Shared contracts package (zod) with the first inbound order contract and tests. *(done)*
+- **0.3** Shared contracts package (zod) with the first inbound payment contract and tests. *(done)*
 - **0.4** Web: Vue 3 + TS + Vite, Tailwind v4 design tokens, ESLint, Vitest. *(done)*; Playwright end-to-end tests. *(to do)*
 - **0.5** Desktop: Tauri 2 wrapper, icons, CSP. *(config done; first build needs the Linux system packages listed in the README)*
 - **0.6** Database: Drizzle ORM, migrations, Docker Compose PostgreSQL and Redis, test database per run. *(done)*
 - **0.7** CI (GitHub Actions): typecheck, lint, tests and builds for every workspace package; desktop installers on tagged releases (Windows, macOS, Linux runners). *(done; the release workflow runs on the first `v*` tag)*
-- **0.8** Auth: login, sessions, password reset, 2FA; machine clients with OAuth 2 client credentials, username / password token, bearer, basic and API key header schemes. *(login, sessions and machine clients done; password reset, 2FA and login rate limiting to do)*
+- **0.8** Auth: login, sessions, password reset, 2FA; machine clients with OAuth 2 client credentials, bearer, basic and API key header schemes. *(login, sessions and machine clients done; password reset, 2FA and login rate limiting to do)*
 - **0.9** Organisations and tenancy scope; users, roles, permissions (permission matrix per module and action). *(organisations, memberships and tenancy scope done; user management, roles and permissions to do)*
 - **0.10** Audit log (who changed what, before / after), attachments, comments.
 - **0.11** Number ranges per document type, organisation and year.
@@ -116,115 +107,90 @@ Each step lists deliverables. A step is done when its tests pass in CI and its l
 - **0.15** UI kit: data grid *(first version done: sorting, keyboard selection, sticky header)*, form controls, document window template, master-detail template, dialogs, toasts; grid virtualisation for large lists.
 - **0.16** Settings app *(done: appearance, transparency, density, window controls)* and system health app.
 
-### Phase 1: Master data
+### Phase 1: Portfolio
 
-- **1.1** Units of measure, conversions per product, barcodes per unit.
-- **1.2** Products: categories, brands, principals, tax codes, HS codes, tax-authority units, batch / serial flags, shelf life, empties components, product templates (kits).
-- **1.3** Customers / outlets: roles (sold-to, ship-to, bill-to, payer), channel, class, region, territory, route, GPS, VAT / KRA PIN, payment terms and modes, price list, discount rate, account status, custom attributes (integrations send arbitrary extra fields).
-- **1.4** Customer hierarchy and groups; ship-to locations.
-- **1.5** Suppliers / principals.
-- **1.6** Warehouses, locations, vans as locations, vehicles.
-- **1.7** Routes, territories, regions; sales users and reps (with the `user_code` field apps send).
-- **1.8** Chart of accounts (basic), payment terms, payment modes, expense, leave and feedback categories.
-- **1.9** Import wizards (Excel / CSV) for every master, with validation previews.
+- **1.1** Owners: people and companies, contacts, KRA PIN, payout accounts.
+- **1.2** Properties, blocks and units: unit types, size, floor, amenities, photos, status (vacant, reserved, occupied, unavailable).
+- **1.3** Meters per unit (water, electricity) and their reading history.
+- **1.4** Charge types (rent, service charge, water, garbage, parking, penalties) with tax codes and GL accounts.
+- **1.5** Payment terms, payment methods, chart of accounts (basic).
+- **1.6** Import wizards (Excel / CSV) for owners, properties, units and opening balances, with validation previews.
 
-### Phase 2: Pricing engine
+### Phase 2: Leasing
 
-- **2.1** Condition types, procedures, access sequences, condition records with validity and scales.
-- **2.2** Price lists, customer special prices, discounts (customer, product, group), VAT-inclusive / exclusive handling, rounding rules.
-- **2.3** Blanket agreements (contract quantities and prices per customer).
-- **2.4** Free goods (inclusive / exclusive) and bundles.
-- **2.5** Listing / exclusion and product substitution.
-- **2.6** Pricing simulator window (enter customer + product + date, see each step).
+- **2.1** Tenants (people and companies), contacts, identity documents, guarantors, emergency contacts.
+- **2.2** Applications: applicant details, documents, checks, approval, reservation of a unit.
+- **2.3** Leases: term, rent, escalation schedule, recurring charges, deposit, billing day, due terms, late-payment policy, documents and signatures.
+- **2.4** Renewals with new terms, notices from either side, lease end and move-out date.
+- **2.5** Lease window: header, charges grid, ledger, documents, timeline; several open side by side.
 
-### Phase 3: Integration hub (early, so field sales apps can work against xBO)
+### Phase 3: Billing and rent roll
 
-- **3.1** Integration core: per-organisation connection profiles (URLs, auth scheme), outbox / inbox tables, idempotency keys, retries with backoff, dead-letter queue, replay, mapping tables (external id <-> xBO id).
-- **3.2** Contract fixtures: JSON fixtures and contract tests for every integration payload, accepting the field variations real clients send (numbers as strings, extra attributes).
-- **3.3** Inbound reads: price lists, special prices, blanket agreements, promotions, stock balances, van stock, credit limits / open invoices, user credit limits, customer locations, serials, targets, expense categories, loyalty balances.
-- **3.4** Inbound documents: orders, quotations, sales, credit notes, credit note requests, delivery and goods returns, payments, customers, products, users, stock requests, stock takes, reconciliations, trucks for delivery planning, expenses, incentives, leave, feedback, survey answers. Response always `{transaction_id, transaction_reference}`.
-- **3.5** Machine-client auth on every integration endpoint. *(done in 0.8)*
-- **3.6** Outbound webhooks: customers, products, prices, stock balances, promotions, sales documents, order / collection / requisition / leave status, stock transfers, delivery trips, GL and COGS accounts, categories; signed payloads and per-subscriber retry.
-- **3.7** Polling feeds: orders, invoices and transfer requests waiting for an external system, with acknowledgement and result posting.
-- **3.8** Integration monitor app: message list by category, payload viewer, retry / replay, alerts by email.
-- **3.9** Onboarding guide for integrators: OpenAPI reference, auth setup, data migration order, parallel-run checklist.
+- **3.1** Billing runs: collect active leases by billing day, rent with escalations, recurring charges, prorating for part months; draft, review, post.
+- **3.2** Metered utilities: reading capture (grid and import), consumption, tariffs, billing.
+- **3.3** Late-payment penalties by policy, with approval to waive.
+- **3.4** Credit and debit notes with approval.
+- **3.5** Invoice output: PDF layout, email and SMS delivery.
+- **3.6** KRA eTIMS adapter for VAT-registered landlords (commercial lets), with offline queue and retry.
+- **3.7** Rent roll window: every unit with tenant, rent, balance and status; saved views per portfolio.
 
-### Phase 4: Order to cash
+### Phase 4: Collections and deposits
 
-- **4.1** Sales order window: entry, pricing, free goods, listing, substitution, incompleteness, statuses, output.
-- **4.2** Availability check, reservations, product allocation by region / channel / customer, backorder re-run.
-- **4.3** Credit management: segments, exposure, checks at order / delivery / goods issue, block worklist and release.
-- **4.4** Deliveries from orders, FEFO batch determination with minimum remaining shelf life and splits, picking lists, packing, goods issue with GL posting.
-- **4.5** Invoicing: billing runs, combine / split rules, GL posting, PDF and thermal print layouts.
-- **4.6** E-invoicing: KRA eTIMS and URA EFRIS adapters with offline queue and retry; signed QR data on invoices.
-- **4.7** Credit and debit notes, credit note requests with approval.
-- **4.8** Returns: delivery and market returns, inspection, disposition (restock, quarantine, scrap, return to principal).
-- **4.9** Payments: cash, M-Pesa (Daraja: STK push, C2B confirmation), MTN MoMo, cheque (bounce handling), bank; allocation to invoices, unallocated credit, receipts.
-- **4.10** Customer statements, ageing, collections worklist, dunning.
+- **4.1** Payments: M-Pesa (Daraja paybill C2B confirmations, STK push), bank transfers, cards, cheques (bounce handling), cash; receipts.
+- **4.2** Matching: account reference to unit or tenant, fuzzy suggestions, worklist for unmatched payments.
+- **4.3** Allocation: oldest invoice first by default, manual override, unallocated credit and refunds.
+- **4.4** Arrears: ageing, reminder schedules by SMS and email, demand letters, payment plans.
+- **4.5** Tenant statements.
+- **4.6** Deposits: receipt, top-ups, move-out deductions, refunds with approval.
+- **4.7** Bank and mobile-money statement import and reconciliation.
 
-### Phase 5: Inventory and warehouse
+### Phase 5: Integration hub (so payment services and portals can work against xBO)
 
-- **5.1** Batches with production / expiry dates, shelf-life checks at receipt, expiry blocking.
-- **5.2** Goods receipts from principals / suppliers with batch capture.
-- **5.3** Transfers and requisitions (depot to depot, warehouse to van), in-transit stock.
-- **5.4** Adjustments with reason codes and approval thresholds.
-- **5.5** Stock takes: freeze, count sheets, mobile count, variance posting.
-- **5.6** Near-expiry and slow-mover reports; serial numbers.
-- **5.7** Moving-average valuation and stock value reports.
+- **5.1** Integration core: per-organisation connection profiles, outbox / inbox tables, idempotency keys, retries with backoff, dead-letter queue, replay, mapping tables (external id <-> xBO id).
+- **5.2** Inbound: payment notifications, maintenance requests, meter readings, rental applications; reads for tenant balances, statements, open invoices and vacant units.
+- **5.3** Outbound webhooks: invoice issued, payment matched or unmatched, lease signed, notice given, unit vacated, work order status changed, owner statement approved; signed payloads and per-subscriber retry.
+- **5.4** Polling feeds: reminders and remittances waiting for an external system, with acknowledgement.
+- **5.5** Integration monitor app: message list by category, payload viewer, retry / replay, alerts by email.
+- **5.6** Onboarding guide for integrators: OpenAPI reference, auth setup, data migration order.
 
-### Phase 6: Van sales, route settlement, empties, logistics
+### Phase 6: Owner accounting
 
-- **6.1** Visit plans and journey plans (from a field sales app's routes or maintained in xBO).
-- **6.2** Tours: load proposal, check-out count, gate pass.
-- **6.3** Van stock as a location; van sales arriving from field apps as sales documents.
-- **6.4** Check-in: returned stock, empties and cash counted, supervisor confirmation.
-- **6.5** Route settlement: stock, cash (by payment method) and empties reconciliation; variance to driver liability or write-off with approval; settlement document and GL postings.
-- **6.6** Empties: returnable items, deposit pricing, product-to-empties links, customer empties balances, exchange vs charge rules.
-- **6.7** Delivery planner, trips, proof of delivery.
+- **6.1** Management agreements: fee as a percentage of collections or a fixed amount, approval limits, payout schedule.
+- **6.2** Owner sub-ledgers for client money; expenses charged to owners.
+- **6.3** Owner statements: collections, fees, expenses, remittance due; approval and PDF output.
+- **6.4** Remittances: payment proposals, bank files, confirmation.
 
-### Phase 7: Finance
+### Phase 7: Maintenance and inspections
 
-- **7.1** General ledger, journals, account determination for every posting document.
-- **7.2** Accounts payable and supplier payments.
-- **7.3** Bank accounts, bank statement import and reconciliation (including M-Pesa statements).
-- **7.4** Expenses and incentives from field apps, with approval.
-- **7.5** Periods, closing, trial balance, P&L, balance sheet, VAT reports.
-- **7.6** Margin analysis by customer, product, channel, route (after trade spend).
+- **7.1** Work orders from tenants, staff or inspections; priority, photos, status.
+- **7.2** Contractors, quotes, approvals (owner approval above a limit), completion, contractor bills.
+- **7.3** Cost recovery: charge to owner, recover from tenant, or absorb.
+- **7.4** Preventive schedules (lifts, pumps, fire equipment).
+- **7.5** Inspections: templates, room-by-room condition and photos, move-in versus move-out comparison, damage pricing into the final account.
 
-### Phase 8: Trade spend
+### Phase 8: Finance
 
-- **8.1** Promotions: budget, plan, approve, execute as pricing / free-goods rules, evaluate.
-- **8.2** Rebates as condition contracts: accrual per invoice, periodic and final settlement.
-- **8.3** Loyalty balances, product participation and customer enrolment status.
-- **8.4** Claims and deductions: short payments to dispute cases, matching to promotions, resolution.
+- **8.1** General ledger, journals, account determination for every posting document.
+- **8.2** Accounts payable and contractor payments.
+- **8.3** Periods, closing, trial balance, P&L, balance sheet.
+- **8.4** Tax reports: monthly rental income tax and VAT for commercial lets.
 
-### Phase 9: Procurement
+### Phase 9: Reporting and analytics
 
-- **9.1** Purchase requisitions and orders, principal ordering with suggested quantities.
-- **9.2** Supplier invoices, three-way match, payment proposals.
+- **9.1** Occupancy, vacancy duration, turnover, arrears trends, collection rate, yield per property.
+- **9.2** Dashboards per role; scheduled reports; BI export.
 
-### Phase 10: Manufacturing and quality (manufacturer segment)
+### Phase 10: Hardening and rollout
 
-- **10.1** Recipes and production orders, consumption and output with batch genealogy.
-- **10.2** Quality inspection lots, results, usage decisions, certificates.
-- **10.3** Traceability and recall cockpit (backward / forward through batches, deliveries, customers).
-
-### Phase 11: Planning and analytics
-
-- **11.1** Sales targets (published to field apps), forecasts, replenishment proposals.
-- **11.2** Dashboards per role; scheduled reports; BI export.
-
-### Phase 12: Hardening and rollout
-
-- **12.1** Performance: load tests for order intake and posting at the volumes of a large field sales force; database indexing review.
-- **12.2** Security review, backups and restore drills, observability (Sentry, logs, metrics).
-- **12.3** Migration tooling from other ERPs' CSV and Excel exports.
-- **12.4** Signed and notarised desktop installers with auto-update (Tauri updater) for Windows, macOS and Linux.
-- **12.5** User and admin documentation.
+- **10.1** Performance: load tests for billing runs and month-start payment volumes at the size of a large portfolio; database indexing review.
+- **10.2** Security review, backups and restore drills, observability (Sentry, logs, metrics).
+- **10.3** Migration tooling from spreadsheets and other property systems' CSV and Excel exports.
+- **10.4** Signed and notarised desktop installers with auto-update (Tauri updater) for Windows, macOS and Linux.
+- **10.5** User and admin documentation.
 
 ### Suggested order of delivery
 
-Phases 0 -> 1 -> 2 -> 3 (field sales apps can send master data and orders to xBO) -> 4 -> 5 -> 6 -> 7 (xBO can fully replace the ERP for a distributor) -> 8 -> 9 -> 10 -> 11, with 12 running alongside from Phase 4.
+Phases 0 -> 1 -> 2 -> 3 -> 4 (a management company can let units, bill and collect) -> 5 (payment services post straight to xBO) -> 6 (owner statements and remittances) -> 7 -> 8 -> 9, with 10 running alongside from Phase 4.
 
 ## 6. Engineering conventions
 
@@ -240,9 +206,9 @@ Phases 0 -> 1 -> 2 -> 3 (field sales apps can send master data and orders to xBO
 
 | Risk / question | Mitigation |
 | --- | --- |
-| Integration clients send field-level variations (types, extra fields) | Step 3.2 builds contract fixtures from real payloads before the endpoints |
-| Scope is very large (a full ERP) | Ship in the phase order above; each phase is usable on its own |
-| eTIMS / EFRIS specifications change | Isolate in adapters; verify against current KRA / URA documentation at step 4.6 |
+| Payment references are typed by tenants and are often wrong | Matching worklist from Phase 4, fuzzy suggestions, and per-tenant reference aliases learned from manual matches |
+| Scope is large | Ship in the phase order above; each phase is usable on its own |
+| Client money rules differ by country and by the agent's licensing | Owner sub-ledgers from the start; confirm local rules before Phase 6 |
+| eTIMS specification changes | Isolate in an adapter; verify against current KRA documentation at step 3.6 |
 | Accounting correctness | Double-entry invariants enforced in the database (balanced journals), accountant review of account determination |
-| Which segment first (distributor vs manufacturer) | Plan assumes distributors first; manufacturing is Phase 10 |
 | Hosting target | Assumed Docker on a Linux VM; confirm |

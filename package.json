@@ -2,7 +2,7 @@
   "name": "xbo",
   "private": true,
   "version": "0.1.0",
-  "description": "xBO (Back Office): open-source FMCG ERP for web and desktop.",
+  "description": "xBO (Back Office): open-source property management back office for web and desktop.",
   "packageManager": "pnpm@10.30.2",
   "engines": {
     "node": ">=22"

@@ -14,6 +14,7 @@ export default defineConfig({
       { find: /^@xbo-ui\/vue$/, replacement: source('../../packages/vue/src/index.ts') },
       { find: /^@xbo-ui\/vue\/tailwind\.css$/, replacement: source('../../packages/vue/tailwind.css') },
       { find: /^@xbo-ui\/core$/, replacement: source('../../packages/core/src/index.ts') },
+      { find: /^@xbo-ui\/tauri$/, replacement: source('../../packages/tauri/src/index.ts') },
     ],
   },
   // Tauri serves the build from its own origin, so asset paths must be relative.

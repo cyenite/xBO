@@ -1,5 +1,6 @@
 import { createApp } from 'vue';
 import { createXbo, defineApp } from '@xbo-ui/vue';
+import { openExternal, tauriConfig } from '@xbo-ui/tauri';
 import App from './App.vue';
 import ComponentsApp from './apps/ComponentsApp.vue';
 import FilesApp from './apps/FilesApp.vue';
@@ -9,6 +10,8 @@ import WelcomeApp from './apps/WelcomeApp.vue';
 import ConnectionStatus from './ConnectionStatus.vue';
 import { RiCompass3Line, RiFolder3Line, RiGithubLine, RiLayoutGridLine, RiStickyNoteLine, RiTestTubeLine } from './icons';
 import './styles.css';
+
+const tauri = tauriConfig({ path: 'playground.json' });
 
 const xbo = createXbo({
   brand: {
@@ -84,10 +87,10 @@ const xbo = createXbo({
     }),
   ],
   settingsSections: [{ id: 'playground', icon: RiTestTubeLine, label: 'Playground', order: 60, component: PlaygroundSettings }],
-  statusItems: [ConnectionStatus],
-  helpMenu: [{ icon: RiGithubLine, label: 'xBO on GitHub', run: () => window.open('https://github.com/cyenite/xBO', '_blank', 'noopener') }],
+  statusItems: [ConnectionStatus, ...tauri.statusItems],
+  helpMenu: [{ icon: RiGithubLine, label: 'xBO on GitHub', run: () => void openExternal('https://github.com/cyenite/xBO') }],
   startup: { open: ['welcome'] },
-  preferences: { namespace: 'xbo-playground' },
+  preferences: { namespace: 'xbo-playground', ...tauri.preferences },
 });
 
 createApp(App).use(xbo).mount('#app');

@@ -6,6 +6,7 @@ const budgets = [
   { file: 'packages/core/dist/index.js', maxGzip: 12_000 },
   { file: 'packages/vue/dist/index.js', maxGzip: 60_000 },
   { file: 'packages/vue/dist/style.css', maxGzip: 14_000 },
+  { file: 'packages/tauri/dist/index.js', maxGzip: 3_000 },
 ];
 
 let hasFailed = false;

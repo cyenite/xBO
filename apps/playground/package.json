@@ -10,12 +10,16 @@
     "preview": "vite preview",
     "typecheck": "vue-tsc --noEmit",
     "lint": "eslint .",
-    "test": "vitest run --passWithNoTests"
+    "test": "vitest run --passWithNoTests",
+    "tauri": "tauri",
+    "desktop": "tauri dev",
+    "desktop:build": "tauri build"
   },
   "dependencies": {
     "@xbo-ui/vue": "workspace:*",
     "vue": "^3.5.44",
-    "@vueuse/core": "^15.0.0"
+    "@vueuse/core": "^15.0.0",
+    "@xbo-ui/tauri": "workspace:*"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
@@ -34,6 +38,7 @@
     "unplugin-icons": "^24.0.0",
     "vite": "^8.3.5",
     "vitest": "^5.0.5",
-    "vue-tsc": "^3.3.13"
+    "vue-tsc": "^3.3.13",
+    "@tauri-apps/cli": "^2.12.4"
   }
 }

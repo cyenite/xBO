@@ -128,6 +128,7 @@ function toggleNotifications(): void {
   <header
     class="xbo-material xb:absolute xb:inset-x-0 xb:top-0 xb:flex xb:h-[30px] xb:items-center xb:justify-between xb:border-b xb:border-hairline xb:pr-2 xb:pl-1"
     :style="{ zIndex: 'var(--xbo-z-menubar)' }"
+    :data-tauri-drag-region="xbo.isTauri || undefined"
   >
     <MenubarRoot class="xb:flex xb:h-full xb:min-w-0 xb:items-center xb:overflow-hidden">
       <MenubarMenu value="xbo:brand">

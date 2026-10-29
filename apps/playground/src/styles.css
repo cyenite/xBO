@@ -1,0 +1,9 @@
+@import 'tailwindcss';
+@import '@xbo-ui/vue/tailwind.css';
+
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+}

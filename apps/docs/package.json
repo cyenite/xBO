@@ -1,0 +1,23 @@
+{
+  "name": "@xbo-ui/docs",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "xBO documentation site with live, embedded desktops.",
+  "scripts": {
+    "dev": "vitepress dev --port 5192",
+    "build": "vitepress build",
+    "preview": "vitepress preview"
+  },
+  "dependencies": {
+    "@xbo-ui/vue": "workspace:*",
+    "vue": "^3.5.44"
+  },
+  "devDependencies": {
+    "@iconify-json/ri": "^1.2.10",
+    "@tailwindcss/vite": "^4.3.3",
+    "tailwindcss": "^4.3.3",
+    "unplugin-icons": "^24.0.0",
+    "vitepress": "^1.6.4"
+  }
+}

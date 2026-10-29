@@ -1,0 +1,4 @@
+/* Demos sit inside `.vp-raw`, which keeps VitePress article styles out; only its global button cursor remains. */
+.xbo-desktop button {
+  cursor: default;
+}

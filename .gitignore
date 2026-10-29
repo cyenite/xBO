@@ -1,7 +1,6 @@
 node_modules/
 dist/
 dist-electron/
-release/
 coverage/
 *.tsbuildinfo
 .env
@@ -13,3 +12,11 @@ coverage/
 
 # Personal documentation (living docs, maps, footguns, handoff notes)
 .docs/
+
+# Playwright
+test-results/
+playwright-report/
+
+# VitePress
+apps/docs/.vitepress/dist/
+apps/docs/.vitepress/cache/

@@ -1,0 +1,30 @@
+name: Bug report
+description: Something in xBO does not work as documented.
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected and what happened instead.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: A minimal config or a link to a repository helps most.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Package and version
+      placeholder: '@xbo-ui/vue 0.1.0'
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Browser or Tauri, and operating system
+      placeholder: Firefox 140 on Linux

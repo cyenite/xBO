@@ -2,16 +2,38 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "web",
+      "name": "playground",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "@xbo/web", "dev"],
+      "runtimeArgs": [
+        "--filter",
+        "@xbo-ui/playground",
+        "dev"
+      ],
       "port": 5190
     },
     {
-      "name": "api",
+      "name": "docs",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "@xbo/api", "dev"],
-      "port": 3000
+      "runtimeArgs": [
+        "--filter",
+        "@xbo-ui/docs",
+        "dev"
+      ],
+      "port": 5192
+    },
+    {
+      "name": "docs-preview",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "--filter",
+        "@xbo-ui/docs",
+        "exec",
+        "vitepress",
+        "preview",
+        "--port",
+        "5193"
+      ],
+      "port": 5193
     }
   ]
 }

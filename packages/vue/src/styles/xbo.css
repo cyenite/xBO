@@ -1,0 +1,79 @@
+/*
+ * Library stylesheet. Utilities carry the `xb:` prefix and there is no preflight, so this file never restyles or
+ * collides with the host page, including a host that uses Tailwind itself. Every token lives on the desktop root
+ * (`.xbo-desktop`) as an `--xbo-*` custom property written by the theme at runtime.
+ *
+ * Everything except Tailwind's theme variables is unlayered: unlayered host rules beat any layered rule regardless of
+ * specificity, so a host stylesheet with `h2 { font-size: 24px }` would otherwise restyle every window title. Order
+ * matters instead: the reset, then component classes, then utilities, so utilities can adjust components.
+ */
+@layer theme;
+
+@import 'tailwindcss/theme.css' layer(theme) prefix(xb);
+@import './base.css';
+@import './components.css';
+@import 'tailwindcss/utilities.css';
+
+@source '../';
+
+@custom-variant dark (&:where([data-xbo-mode='dark'], [data-xbo-mode='dark'] *));
+
+@theme inline {
+  --color-*: initial;
+  --font-*: initial;
+
+  --font-sans: var(--xbo-font-sans);
+  --font-mono: var(--xbo-font-mono);
+
+  --color-desktop: var(--xbo-desktop);
+  --color-window: var(--xbo-window);
+  --color-chrome: var(--xbo-chrome);
+  --color-raised: var(--xbo-raised);
+  --color-hover: var(--xbo-hover);
+  --color-pressed: var(--xbo-pressed);
+  --color-hairline: var(--xbo-hairline);
+  --color-field-border: var(--xbo-field-border);
+  --color-ink: var(--xbo-ink);
+  --color-ink-muted: var(--xbo-ink-muted);
+  --color-ink-subtle: var(--xbo-ink-subtle);
+  --color-primary: var(--xbo-primary);
+  --color-primary-hover: var(--xbo-primary-hover);
+  --color-primary-soft: var(--xbo-primary-soft);
+  --color-on-primary: var(--xbo-on-primary);
+  --color-focus: var(--xbo-focus);
+  --color-danger: var(--xbo-danger);
+  --color-danger-soft: var(--xbo-danger-soft);
+  --color-warning: var(--xbo-warning);
+  --color-warning-fill: var(--xbo-warning-fill);
+  --color-warning-soft: var(--xbo-warning-soft);
+  --color-success: var(--xbo-success);
+  --color-success-soft: var(--xbo-success-soft);
+  --color-transparent: transparent;
+
+  --text-label: calc(11px * var(--xbo-text-scale));
+  --text-label--line-height: 1.3;
+  --text-label--letter-spacing: 0.01em;
+  --text-caption: calc(12px * var(--xbo-text-scale));
+  --text-caption--line-height: 1.4;
+  --text-body: calc(13px * var(--xbo-text-scale));
+  --text-body--line-height: 1.45;
+  --text-title: calc(15px * var(--xbo-text-scale));
+  --text-title--line-height: 1.35;
+  --text-headline: calc(17px * var(--xbo-text-scale));
+  --text-headline--line-height: 1.3;
+  --text-display: calc(20px * var(--xbo-text-scale));
+  --text-display--line-height: 1.25;
+  --text-display--letter-spacing: -0.01em;
+
+  --radius-xs: var(--xbo-radius-xs);
+  --radius-sm: var(--xbo-radius-sm);
+  --radius-md: var(--xbo-radius-md);
+  --radius-lg: var(--xbo-radius-lg);
+  --radius-xl: var(--xbo-radius-xl);
+
+  --shadow-window: var(--xbo-shadow-window);
+  --shadow-window-idle: var(--xbo-shadow-window-idle);
+  --shadow-popover: var(--xbo-shadow-popover);
+  --shadow-taskbar: var(--xbo-shadow-taskbar);
+}
+

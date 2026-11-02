@@ -1,6 +1,6 @@
 {
   "name": "@xbo-ui/core",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Framework-free core of xBO: window management, geometry, shortcuts, theming and preferences for desktop-style web apps.",
   "license": "MIT",
   "type": "module",

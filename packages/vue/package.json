@@ -1,6 +1,6 @@
 {
   "name": "@xbo-ui/vue",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Vue 3 bindings for xBO: a desktop shell with windows, menus, taskbar, command palette, theming, settings and a component kit.",
   "license": "MIT",
   "type": "module",

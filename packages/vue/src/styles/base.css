@@ -1,4 +1,4 @@
-/* Desktop-scoped variables and reset. Unlayered on purpose: see the note in xbo.css. */
+/* Desktop-scoped variables and reset. Unlayered on purpose, apart from the app content reset: see the note in xbo.css. */
 .xbo-desktop {
   --xbo-shade: 10 25 30;
   --xbo-material-alpha: 0.78;
@@ -59,28 +59,32 @@
 .xbo-desktop[data-xbo-text-scale='120'] { --xbo-text-scale: 1.2; }
 .xbo-desktop[data-xbo-text-scale='130'] { --xbo-text-scale: 1.3; }
 
-/* The minimal reset the components rely on, scoped so the host page keeps its own styles. */
-.xbo-desktop *,
-.xbo-desktop *::before,
-.xbo-desktop *::after {
+/*
+ * The minimal reset the components rely on, scoped so the host page keeps its own styles. Library DOM gets it
+ * unlayered so no host rule can restyle the chrome; components the host hands in (`.xbo-app-content`) get a
+ * zero-specificity copy in `@layer base`, so the host's Tailwind utilities and base styles win there.
+ */
+.xbo-desktop :where(:not(.xbo-app-content *)),
+.xbo-desktop :where(:not(.xbo-app-content *))::before,
+.xbo-desktop :where(:not(.xbo-app-content *))::after {
   box-sizing: border-box;
   border-width: 0;
   border-style: solid;
   border-color: var(--xbo-hairline);
 }
 
-.xbo-desktop :where(h1, h2, h3, h4, h5, h6, p, ul, ol, dl, dd, figure, blockquote) {
+.xbo-desktop :where(h1, h2, h3, h4, h5, h6, p, ul, ol, dl, dd, figure, blockquote):where(:not(.xbo-app-content *)) {
   margin: 0;
   font-size: inherit;
   font-weight: inherit;
 }
 
-.xbo-desktop :where(ul, ol) {
+.xbo-desktop :where(ul, ol):where(:not(.xbo-app-content *)) {
   padding: 0;
   list-style: none;
 }
 
-.xbo-desktop :where(button, input, select, textarea) {
+.xbo-desktop :where(button, input, select, textarea):where(:not(.xbo-app-content *)) {
   margin: 0;
   padding: 0;
   font: inherit;
@@ -89,25 +93,78 @@
   background: transparent;
 }
 
-.xbo-desktop :where(button, [role='button']) {
+.xbo-desktop :where(button, [role='button']):where(:not(.xbo-app-content *)) {
   cursor: default;
 }
 
-.xbo-desktop :where(svg) {
+.xbo-desktop :where(svg):where(:not(.xbo-app-content *)) {
   display: block;
   flex-shrink: 0;
 }
 
-.xbo-desktop :where(input, textarea, [contenteditable]),
+.xbo-desktop :where(input, textarea, [contenteditable]):where(:not(.xbo-app-content *)),
 .xbo-desktop .xbo-selectable {
   user-select: text;
 }
 
-.xbo-desktop :where(:focus-visible) {
+.xbo-desktop :where(:focus-visible):where(:not(.xbo-app-content *)) {
   outline: 2px solid var(--xbo-focus);
   outline-offset: 1px;
 }
 
-.xbo-desktop ::selection {
+.xbo-desktop :where(:not(.xbo-app-content *))::selection {
   background: var(--xbo-primary-soft);
+}
+
+@layer base {
+  :where(.xbo-app-content *),
+  :where(.xbo-app-content *)::before,
+  :where(.xbo-app-content *)::after {
+    box-sizing: border-box;
+    border-width: 0;
+    border-style: solid;
+    border-color: var(--xbo-hairline);
+  }
+
+  :where(.xbo-app-content) :where(h1, h2, h3, h4, h5, h6, p, ul, ol, dl, dd, figure, blockquote) {
+    margin: 0;
+    font-size: inherit;
+    font-weight: inherit;
+  }
+
+  :where(.xbo-app-content) :where(ul, ol) {
+    padding: 0;
+    list-style: none;
+  }
+
+  :where(.xbo-app-content) :where(button, input, select, textarea) {
+    margin: 0;
+    padding: 0;
+    font: inherit;
+    color: inherit;
+    letter-spacing: inherit;
+    background: transparent;
+  }
+
+  :where(.xbo-app-content) :where(button, [role='button']) {
+    cursor: default;
+  }
+
+  :where(.xbo-app-content) :where(svg) {
+    display: block;
+    flex-shrink: 0;
+  }
+
+  :where(.xbo-app-content) :where(input, textarea, [contenteditable]) {
+    user-select: text;
+  }
+
+  :where(.xbo-app-content) :where(:focus-visible) {
+    outline: 2px solid var(--xbo-focus);
+    outline-offset: 1px;
+  }
+
+  :where(.xbo-app-content *)::selection {
+    background: var(--xbo-primary-soft);
+  }
 }

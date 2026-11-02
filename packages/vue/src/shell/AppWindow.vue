@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { computed, provide, ref } from 'vue';
 import { resizeEdges, type DesktopWindow, type SnapZone } from '@xbo-ui/core';
+import { builtInAppIds } from '../config';
 import { useXbo, windowBodyKey, windowIdKey } from '../composables';
+import AppContent from './AppContent.vue';
 import DialogHost from './DialogHost.vue';
 import WindowControls from './WindowControls.vue';
 import { useWindowGestures } from './useWindowGestures';
@@ -19,6 +21,7 @@ provide(windowIdKey, props.window.id);
 provide(windowBodyKey, body);
 
 const app = computed(() => xbo.findApp(props.window.appId));
+const isBuiltIn = computed(() => Object.values<string>(builtInAppIds).includes(props.window.appId));
 const isMac = computed(() => xbo.chromeStyle.value === 'macos');
 const isFocused = computed(() => xbo.focusedWindow.value?.id === props.window.id);
 const isExpanded = computed(() => props.window.mode === 'maximized' || props.window.snap !== null);
@@ -101,7 +104,10 @@ function toggleMaximize(): void {
     </header>
 
     <div ref="body" class="xb:relative xb:min-h-0 xb:flex-1">
-      <component :is="app.component" v-if="app" :window-id="window.id" :app-id="app.id" :params="window.params" />
+      <component :is="app.component" v-if="app && isBuiltIn" :window-id="window.id" :app-id="app.id" :params="window.params" />
+      <AppContent v-else-if="app">
+        <component :is="app.component" :window-id="window.id" :app-id="app.id" :params="window.params" />
+      </AppContent>
       <DialogHost :window-id="window.id" />
     </div>
 

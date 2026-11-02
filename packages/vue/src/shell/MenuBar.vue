@@ -5,6 +5,7 @@ import { appearanceOptions, densityOptions, windowChromeOptions } from '@xbo-ui/
 import { useXbo } from '../composables';
 import { builtInAppIds, type MenuDefinition, type MenuEntry } from '../config';
 import { RiMoonLine, RiNotification3Line, RiSunLine } from '../icons';
+import AppContent from './AppContent.vue';
 import MenuBarClock from './MenuBarClock.vue';
 import MenubarEntries from './MenubarEntries.vue';
 import XboMark from './XboMark.vue';
@@ -162,8 +163,10 @@ function toggleNotifications(): void {
     </MenubarRoot>
 
     <div class="xb:flex xb:shrink-0 xb:items-center xb:gap-0.5">
-      <component :is="item.component" v-for="item in xbo.statusItems" :key="item.id" />
-      <component :is="xbo.account" v-if="xbo.account" />
+      <AppContent>
+        <component :is="item.component" v-for="item in xbo.statusItems" :key="item.id" />
+        <component :is="xbo.account" v-if="xbo.account" />
+      </AppContent>
       <button
         v-if="xbo.shell.hasAppearanceToggle && !xbo.lockedKeys.has('appearance')"
         type="button"

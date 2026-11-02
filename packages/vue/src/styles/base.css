@@ -103,7 +103,7 @@
   user-select: text;
 }
 
-.xbo-desktop :focus-visible {
+.xbo-desktop :where(:focus-visible) {
   outline: 2px solid var(--xbo-focus);
   outline-offset: 1px;
 }

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { DialogClose, DialogContent, DialogDescription, DialogOverlay, DialogPortal, DialogRoot, DialogTitle } from 'reka-ui';
-import { useXbo } from '../composables';
+import { inject } from 'vue';
+import { appContentKey, useXbo } from '../composables';
 import { RiCloseLine } from '../icons';
 
 const isOpen = defineModel<boolean>('open', { default: false });
@@ -15,6 +16,7 @@ withDefaults(
 );
 
 const xbo = useXbo();
+const isAppContent = inject(appContentKey, false);
 </script>
 
 <template>
@@ -29,10 +31,10 @@ const xbo = useXbo();
           </div>
           <DialogClose class="xbo-button is-plain is-icon is-small" aria-label="Close"><RiCloseLine width="15" height="15" aria-hidden="true" /></DialogClose>
         </header>
-        <div class="xb:min-h-0 xb:flex-1 xb:overflow-y-auto xb:px-5 xb:py-4">
+        <div class="xb:min-h-0 xb:flex-1 xb:overflow-y-auto xb:px-5 xb:py-4" :class="{ 'xbo-app-content': isAppContent }">
           <slot />
         </div>
-        <footer v-if="$slots.footer" class="xb:flex xb:justify-end xb:gap-2 xb:border-t xb:border-hairline xb:bg-chrome xb:px-5 xb:py-3">
+        <footer v-if="$slots.footer" class="xb:flex xb:justify-end xb:gap-2 xb:border-t xb:border-hairline xb:bg-chrome xb:px-5 xb:py-3" :class="{ 'xbo-app-content': isAppContent }">
           <slot name="footer" />
         </footer>
       </DialogContent>

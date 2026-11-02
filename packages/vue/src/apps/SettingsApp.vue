@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, markRaw, ref, watch, type Component } from 'vue';
 import { useCurrentWindow, useXbo } from '../composables';
+import AppContent from '../shell/AppContent.vue';
 import { RiGlobalLine, RiInformationLine, RiKeyboardLine, RiLayoutBottomLine, RiPaletteLine, RiWindowLine } from '../icons';
 import AboutSection from './settings/AboutSection.vue';
 import AppearanceSection from './settings/AppearanceSection.vue';
@@ -63,7 +64,10 @@ watch(sectionId, (id) => currentWindow.setParams({ section: id }));
     </nav>
     <section class="xb:min-w-0 xb:flex-1 xb:overflow-y-auto xb:bg-chrome/40" :aria-label="section?.label">
       <div class="xb:mx-auto xb:max-w-[680px] xb:px-8 xb:py-7">
-        <component :is="section.component" v-if="section" />
+        <AppContent v-if="section && xbo.settingsSections.includes(section)">
+          <component :is="section.component" />
+        </AppContent>
+        <component :is="section.component" v-else-if="section" />
       </div>
     </section>
   </div>

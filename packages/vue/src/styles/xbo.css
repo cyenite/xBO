@@ -3,11 +3,13 @@
  * collides with the host page, including a host that uses Tailwind itself. Every token lives on the desktop root
  * (`.xbo-desktop`) as an `--xbo-*` custom property written by the theme at runtime.
  *
- * Everything except Tailwind's theme variables is unlayered: unlayered host rules beat any layered rule regardless of
- * specificity, so a host stylesheet with `h2 { font-size: 24px }` would otherwise restyle every window title. Order
- * matters instead: the reset, then component classes, then utilities, so utilities can adjust components.
+ * Everything except Tailwind's theme variables and the app content reset is unlayered: unlayered host rules beat any
+ * layered rule regardless of specificity, so a host stylesheet with `h2 { font-size: 24px }` would otherwise restyle
+ * every window title. Order matters instead: the reset, then component classes, then utilities, so utilities can
+ * adjust components. The app content reset sits in `base`, the layer Tailwind's preflight uses, so it ranks below a
+ * host's Tailwind utilities whichever stylesheet loads first.
  */
-@layer theme;
+@layer theme, base;
 
 @import 'tailwindcss/theme.css' layer(theme) prefix(xb);
 @import './base.css';

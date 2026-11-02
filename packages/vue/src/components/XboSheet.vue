@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { inject, nextTick, ref, useId, watch } from 'vue';
 import { FocusScope } from 'reka-ui';
-import { windowBodyKey } from '../composables';
+import { appContentKey, windowBodyKey } from '../composables';
 
 const isOpen = defineModel<boolean>('open', { default: false });
 
@@ -16,6 +16,7 @@ withDefaults(
 const titleId = useId();
 const panel = ref<HTMLElement | null>(null);
 const windowBody = inject(windowBodyKey, ref(null));
+const isAppContent = inject(appContentKey, false);
 
 watch(isOpen, async (isNowOpen) => {
   if (!isNowOpen) return;
@@ -39,10 +40,10 @@ function onKeydown(event: KeyboardEvent): void {
         <FocusScope trapped loop as-child>
           <section ref="panel" class="sheet" role="dialog" aria-modal="true" :aria-labelledby="titleId" :style="{ width: `min(${width}, calc(100% - 24px))` }">
             <h2 :id="titleId" class="xb:px-5 xb:pt-4 xb:text-title xb:font-semibold xb:text-ink">{{ title }}</h2>
-            <div class="xb:px-5 xb:py-3">
+            <div class="xb:px-5 xb:py-3" :class="{ 'xbo-app-content': isAppContent }">
               <slot />
             </div>
-            <footer v-if="$slots.footer" class="xb:flex xb:justify-end xb:gap-2 xb:px-5 xb:pb-4">
+            <footer v-if="$slots.footer" class="xb:flex xb:justify-end xb:gap-2 xb:px-5 xb:pb-4" :class="{ 'xbo-app-content': isAppContent }">
               <slot name="footer" />
             </footer>
           </section>
